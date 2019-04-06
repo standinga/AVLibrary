@@ -10,6 +10,15 @@
 		9030CC8D225958C600510F1C /* AVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9030CC83225958C600510F1C /* AVLibrary.framework */; };
 		9030CC92225958C600510F1C /* AVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CC91225958C600510F1C /* AVLibraryTests.swift */; };
 		9030CC94225958C600510F1C /* AVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 9030CC86225958C600510F1C /* AVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9030CCA32259590300510F1C /* AVEngineMockupUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */; };
+		9030CCA52259590300510F1C /* AVEngineFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CC9F2259590300510F1C /* AVEngineFactory.swift */; };
+		9030CCA62259590300510F1C /* AVEngineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA02259590300510F1C /* AVEngineProtocol.swift */; };
+		9030CCA72259590300510F1C /* AVEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA12259590300510F1C /* AVEngine.swift */; };
+		9030CCA82259590300510F1C /* AVEngineMockup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA22259590300510F1C /* AVEngineMockup.swift */; };
+		9030CCAE2259595900510F1C /* CameraFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAA2259595900510F1C /* CameraFormat.swift */; };
+		9030CCAF2259595900510F1C /* MetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAB2259595900510F1C /* MetaData.swift */; };
+		9030CCB02259595900510F1C /* AVUtils1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA92259595900510F1C /* AVUtils1.swift */; };
+		9030CCB12259595900510F1C /* AVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAC2259595900510F1C /* AVUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +38,16 @@
 		9030CC8C225958C600510F1C /* AVLibraryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AVLibraryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9030CC91225958C600510F1C /* AVLibraryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVLibraryTests.swift; sourceTree = "<group>"; };
 		9030CC93225958C600510F1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEngineMockupUtils.swift; sourceTree = "<group>"; };
+		9030CC9F2259590300510F1C /* AVEngineFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEngineFactory.swift; sourceTree = "<group>"; };
+		9030CCA02259590300510F1C /* AVEngineProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEngineProtocol.swift; sourceTree = "<group>"; };
+		9030CCA12259590300510F1C /* AVEngine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEngine.swift; sourceTree = "<group>"; };
+		9030CCA22259590300510F1C /* AVEngineMockup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEngineMockup.swift; sourceTree = "<group>"; };
+		9030CCA92259595900510F1C /* AVUtils1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVUtils1.swift; sourceTree = "<group>"; };
+		9030CCAA2259595900510F1C /* CameraFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFormat.swift; sourceTree = "<group>"; };
+		9030CCAB2259595900510F1C /* MetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaData.swift; sourceTree = "<group>"; };
+		9030CCAC2259595900510F1C /* AVUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVUtils.m; sourceTree = "<group>"; };
+		9030CCAD2259595900510F1C /* AVUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVUtils.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +90,16 @@
 		9030CC85225958C600510F1C /* AVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				9030CCA12259590300510F1C /* AVEngine.swift */,
+				9030CC9F2259590300510F1C /* AVEngineFactory.swift */,
+				9030CCA22259590300510F1C /* AVEngineMockup.swift */,
+				9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */,
+				9030CCA02259590300510F1C /* AVEngineProtocol.swift */,
+				9030CCAD2259595900510F1C /* AVUtils.h */,
+				9030CCAC2259595900510F1C /* AVUtils.m */,
+				9030CCA92259595900510F1C /* AVUtils1.swift */,
+				9030CCAA2259595900510F1C /* CameraFormat.swift */,
+				9030CCAB2259595900510F1C /* MetaData.swift */,
 				9030CC86225958C600510F1C /* AVLibrary.h */,
 				9030CC87225958C600510F1C /* Info.plist */,
 			);
@@ -148,6 +177,7 @@
 				TargetAttributes = {
 					9030CC82225958C600510F1C = {
 						CreatedOnToolsVersion = 10.2;
+						LastSwiftMigration = 1020;
 					};
 					9030CC8B225958C600510F1C = {
 						CreatedOnToolsVersion = 10.2;
@@ -194,6 +224,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9030CCB12259595900510F1C /* AVUtils.m in Sources */,
+				9030CCA32259590300510F1C /* AVEngineMockupUtils.swift in Sources */,
+				9030CCAE2259595900510F1C /* CameraFormat.swift in Sources */,
+				9030CCB02259595900510F1C /* AVUtils1.swift in Sources */,
+				9030CCA52259590300510F1C /* AVEngineFactory.swift in Sources */,
+				9030CCA82259590300510F1C /* AVEngineMockup.swift in Sources */,
+				9030CCA72259590300510F1C /* AVEngine.swift in Sources */,
+				9030CCA62259590300510F1C /* AVEngineProtocol.swift in Sources */,
+				9030CCAF2259595900510F1C /* MetaData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,6 +380,7 @@
 		9030CC98225958C600510F1C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -358,6 +398,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = co.brama.AVLibrary;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -366,6 +407,7 @@
 		9030CC99225958C600510F1C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -391,6 +433,7 @@
 		9030CC9B225958C600510F1C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7G4JF8R3R6;
 				INFOPLIST_FILE = AVLibraryTests/Info.plist;
@@ -409,6 +452,7 @@
 		9030CC9C225958C600510F1C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 7G4JF8R3R6;
 				INFOPLIST_FILE = AVLibraryTests/Info.plist;
