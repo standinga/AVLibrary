@@ -194,7 +194,8 @@ class AVEngine: NSObject, AVEngineProtocol {
         let format = AVUtils1.getFormatFromFormatString(cameraFormats, formatString: savedFormatString)
         
         let audioDevice = AVCaptureDevice.default(for: .audio)
-        sessionQueue.sync {
+        sessionQueue.async { [weak self] in
+            guard let `self` = self else { return }
             self.avSession.beginConfiguration()
             
             self.initVideoInput(videoDevice: self.videoDevice!, session: self.avSession)
@@ -227,10 +228,11 @@ class AVEngine: NSObject, AVEngineProtocol {
             
             if (self.videoFormat != nil) {
                 let formatString = AVUtils1.formatToString(self.videoFormat)
-                UserDefaults.setCameraFormat(formatString)
+                #warning("needs to be done where delegate is implemented")
+//                UserDefaults.setCameraFormat(formatString)
             }
             self.isRunning = true
-            self.delegate.didStartRunning()
+            self.delegate.didStartRunning(format: self.videoFormat)
         }
     }
     
@@ -324,7 +326,8 @@ class AVEngine: NSObject, AVEngineProtocol {
             NSLog(error.localizedDescription)
             return
         }
-        UserDefaults.setCameraPosition(currentCameraIndex)
+        #warning("this should be dealt in implementating delegate")
+        //        UserDefaults.setCameraPosition(currentCameraIndex)
         
         for input in inputs {
             let inputDescription = input.description

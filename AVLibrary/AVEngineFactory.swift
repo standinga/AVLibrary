@@ -9,8 +9,8 @@
 import Foundation
 
 
-struct AFEngineFactory {
-    static func createAVEngine(lockingQueue: DispatchQueue) -> AVEngineProtocol {
+public struct AFEngineFactory {
+    public static func createAVEngine(lockingQueue: DispatchQueue) -> AVEngineProtocol {
 #if targetEnvironment(simulator)
         return  AVEngineMockup(lockingQueue: lockingQueue)
 #else

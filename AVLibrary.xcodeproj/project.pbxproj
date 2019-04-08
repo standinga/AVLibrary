@@ -19,6 +19,8 @@
 		9030CCAF2259595900510F1C /* MetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAB2259595900510F1C /* MetaData.swift */; };
 		9030CCB02259595900510F1C /* AVUtils1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA92259595900510F1C /* AVUtils1.swift */; };
 		9030CCB12259595900510F1C /* AVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAC2259595900510F1C /* AVUtils.m */; };
+		9030CCB322596D9F00510F1C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCB222596D9F00510F1C /* UIImage+.swift */; };
+		9030CCB522596DC000510F1C /* UIInterfaceOrientation+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCB422596DC000510F1C /* UIInterfaceOrientation+.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +50,8 @@
 		9030CCAB2259595900510F1C /* MetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaData.swift; sourceTree = "<group>"; };
 		9030CCAC2259595900510F1C /* AVUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVUtils.m; sourceTree = "<group>"; };
 		9030CCAD2259595900510F1C /* AVUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVUtils.h; sourceTree = "<group>"; };
+		9030CCB222596D9F00510F1C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
+		9030CCB422596DC000510F1C /* UIInterfaceOrientation+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIInterfaceOrientation+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +99,8 @@
 				9030CCA22259590300510F1C /* AVEngineMockup.swift */,
 				9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */,
 				9030CCA02259590300510F1C /* AVEngineProtocol.swift */,
+				9030CCB422596DC000510F1C /* UIInterfaceOrientation+.swift */,
+				9030CCB222596D9F00510F1C /* UIImage+.swift */,
 				9030CCAD2259595900510F1C /* AVUtils.h */,
 				9030CCAC2259595900510F1C /* AVUtils.m */,
 				9030CCA92259595900510F1C /* AVUtils1.swift */,
@@ -227,10 +233,12 @@
 				9030CCB12259595900510F1C /* AVUtils.m in Sources */,
 				9030CCA32259590300510F1C /* AVEngineMockupUtils.swift in Sources */,
 				9030CCAE2259595900510F1C /* CameraFormat.swift in Sources */,
+				9030CCB522596DC000510F1C /* UIInterfaceOrientation+.swift in Sources */,
 				9030CCB02259595900510F1C /* AVUtils1.swift in Sources */,
 				9030CCA52259590300510F1C /* AVEngineFactory.swift in Sources */,
 				9030CCA82259590300510F1C /* AVEngineMockup.swift in Sources */,
 				9030CCA72259590300510F1C /* AVEngine.swift in Sources */,
+				9030CCB322596D9F00510F1C /* UIImage+.swift in Sources */,
 				9030CCA62259590300510F1C /* AVEngineProtocol.swift in Sources */,
 				9030CCAF2259595900510F1C /* MetaData.swift in Sources */,
 			);

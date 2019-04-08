@@ -8,7 +8,7 @@
 
 import AVFoundation
 
-protocol AVEngineProtocol : class {
+public protocol AVEngineProtocol : class {
     var avSession: AVCaptureSession! { get set }
     var availableCameraFormats: [CameraFormat] { get }
     var fps: Int { get }
@@ -28,10 +28,10 @@ protocol AVEngineProtocol : class {
     func debug()
 }
 
-protocol AVEngineDelegate: class {
+public protocol AVEngineDelegate: class {
     func onPixelBuffer(_ pixelBuffer: CVPixelBuffer, timestamp: CMTime, formatDescription: CMFormatDescription)
     func onAudioBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime, formatDescription: CMFormatDescription)
-    func didStartRunning()
+    func didStartRunning(format: AVCaptureDevice.Format?)
     func flippedCamera(_ camIndex: Int)
     func onVideoFormatDescription(_ formatDescription: CMFormatDescription, timestamp: CMTime)
     func didChangeVideoFormat()

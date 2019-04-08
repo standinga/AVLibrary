@@ -9,14 +9,14 @@
 import Foundation
 import AVFoundation
 
-struct CameraFormat {
-    let index: Int
-    let resolution: String
-    var format: AVCaptureDevice.Format?
-    var currentFormat: AVCaptureDevice.Format?
+public struct CameraFormat {
+    public let index: Int
+    public let resolution: String
+    public var format: AVCaptureDevice.Format?
+    public var currentFormat: AVCaptureDevice.Format?
     var formatDescriptionHash = -1
     
-    init(_ index: Int, resolution: String, format: AVCaptureDevice.Format?) {
+    public init(_ index: Int, resolution: String, format: AVCaptureDevice.Format?) {
         self.index = index
         self.resolution = resolution
         self.format = format

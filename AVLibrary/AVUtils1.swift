@@ -10,11 +10,11 @@ import Foundation
 import AVFoundation
 import UIKit
 
-class AVUtils1 {
+open class AVUtils1 {
     
     static let maxFrameSize = 1280 * 720 // 1920 * 2070 // * 2
     
-    static func updateTimestamp(_ sample: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
+    public static func updateTimestamp(_ sample: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
         var count: CMItemCount = 0
         var osStatus = CMSampleBufferGetSampleTimingInfoArray(sample, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count);
         if osStatus != 0 {
@@ -179,7 +179,7 @@ class AVUtils1 {
         return formats.filter{indexes.contains($0.index)}
     }
     
-    static func formatToString(_ format: AVCaptureDevice.Format?) -> String {
+    public static func formatToString(_ format: AVCaptureDevice.Format?) -> String {
         guard let strongFormat = format else { return "" }
         let description = strongFormat.formatDescription
         let dimensions = CMVideoFormatDescriptionGetDimensions(description)

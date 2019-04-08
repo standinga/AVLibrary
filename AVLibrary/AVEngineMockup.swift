@@ -86,6 +86,6 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     }
     
     func setupAVCapture(_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
-        delegate.didStartRunning()
+        delegate.didStartRunning(format: nil)
     }
 }
