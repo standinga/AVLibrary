@@ -401,14 +401,15 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
         guard let formatDescription =  CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
         
         if connection == videoConnection {
-            lockQueue.sync{
+            lockQueue.async{ [weak delegate] in
                 delegate?.onVideoFormatDescription(formatDescription, timestamp: timestamp)
                 if let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
                     delegate?.onPixelBuffer(imageBuffer, timestamp: timestamp, formatDescription: formatDescription)
+                    delegate?.onVideoSampleBuffer(sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
                 }
             }
         } else if (connection == audioConnection) {
-            lockQueue.sync{
+            lockQueue.async{ [weak delegate] in
                 delegate?.onAudioBuffer(sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
             }
         }
