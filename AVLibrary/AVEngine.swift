@@ -397,7 +397,6 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if pauseCapturing { return }
-//        delegate?.captureOutput(output, didOutput: sampleBuffer, from: connection)
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard let formatDescription =  CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
 
