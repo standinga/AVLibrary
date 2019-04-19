@@ -29,6 +29,7 @@ public protocol AVEngineProtocol : class {
 }
 
 public protocol AVEngineDelegate: class {
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection)
     func onPixelBuffer(_ pixelBuffer: CVPixelBuffer, sampleBuffer: CMSampleBuffer, timestamp: CMTime, formatDescription: CMFormatDescription)
     func onAudioBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime, formatDescription: CMFormatDescription)
     func didStartRunning(format: AVCaptureDevice.Format?)

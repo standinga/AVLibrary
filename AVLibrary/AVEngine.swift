@@ -129,6 +129,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             session.addOutput(videoOut!)
             videoConnection = videoOut!.connection(with: .video)
             videoConnection?.videoOrientation = videoOrientation
+            NSLog("videoConnection?.isVideoMirroringSupported \(videoConnection?.isVideoMirroringSupported)")
         }
     }
     
@@ -183,7 +184,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     public func setupAVCapture (_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
         currentCameraIndex = index
-        
+        NSLog("AVEngine setupAVCapture")
         requestCameraAccess()
         
         avSession = AVCaptureSession()
@@ -396,10 +397,10 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if pauseCapturing { return }
-        
+//        delegate?.captureOutput(output, didOutput: sampleBuffer, from: connection)
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard let formatDescription =  CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
-        
+
         if connection == videoConnection {
             lockQueue.sync{
                 delegate?.onVideoFormatDescription(formatDescription, timestamp: timestamp)
