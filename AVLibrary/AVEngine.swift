@@ -230,7 +230,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             if (self.videoFormat != nil) {
                 let formatString = AVUtils1.formatToString(self.videoFormat)
                 #warning("needs to be done where delegate is implemented")
-//                UserDefaults.setCameraFormat(formatString)
+                //                UserDefaults.setCameraFormat(formatString)
             }
             self.isRunning = true
             self.delegate.didStartRunning(format: self.videoFormat)
@@ -399,18 +399,16 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
         if pauseCapturing { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard let formatDescription =  CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
-
-        delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp, isVideo: connection == videoConnection)
-        if connection == videoConnection {
-            lockQueue.sync{
-                delegate?.onVideoFormatDescription(formatDescription, timestamp: timestamp)
+        lockQueue.sync {
+            delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp, isVideo: connection == videoConnection)
+            if connection == videoConnection {
                 if let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
                     delegate?.onPixelBuffer(imageBuffer, sampleBuffer: sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
                 }
-            }
-        } else if (connection == audioConnection) {
-            lockQueue.sync{
+                
+            } else if (connection == audioConnection) {
                 delegate?.onAudioBuffer(sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
+                
             }
         }
     }
