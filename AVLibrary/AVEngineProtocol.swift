@@ -38,4 +38,5 @@ public protocol AVEngineDelegate: class {
     func didChangeVideoFormat()
     func startedChangingVideoFormat()
     func didSetFocus(_ focus: AVCaptureDevice.FocusMode, lensPosition: Float)
+    func onSampleBuffer(_ sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection, timestamp: CMTime)
 }

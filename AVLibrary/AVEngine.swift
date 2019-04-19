@@ -401,6 +401,7 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard let formatDescription =  CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
 
+        delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp)
         if connection == videoConnection {
             lockQueue.sync{
                 delegate?.onVideoFormatDescription(formatDescription, timestamp: timestamp)
