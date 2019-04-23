@@ -255,7 +255,7 @@ class AVEngine: NSObject, AVEngineProtocol {
                 self.videoDevice?.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(newFPS))
                 self.videoDevice?.unlockForConfiguration()
                 self.currentFPS = fps
-                self.delegate.didChangeVideoFormat()
+                self.delegate.didChangeVideoFormat(format)
             } catch let error {
                 NSLog(error.localizedDescription)
             }

@@ -33,7 +33,7 @@ public protocol AVEngineDelegate: class {
     func onAudioBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime, formatDescription: CMFormatDescription)
     func didStartRunning(format: AVCaptureDevice.Format?)
     func flippedCamera(_ camIndex: Int)
-    func didChangeVideoFormat()
+    func didChangeVideoFormat(_ format: AVCaptureDevice.Format)
     func startedChangingVideoFormat()
     func didSetFocus(_ focus: AVCaptureDevice.FocusMode, lensPosition: Float)
     func onSampleBuffer(_ sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection, timestamp: CMTime, isVideo: Bool)
