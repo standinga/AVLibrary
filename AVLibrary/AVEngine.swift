@@ -104,6 +104,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     deinit {
         videoDevice?.removeObserver(self, forKeyPath: "focusMode")
         videoDevice?.removeObserver(self, forKeyPath: "lensPosition")
+        NSLog("AVEngine deinited!!!")
     }
     
     fileprivate func initVideoInput(videoDevice: AVCaptureDevice, session: AVCaptureSession) {
@@ -354,6 +355,13 @@ class AVEngine: NSObject, AVEngineProtocol {
         avSession.commitConfiguration()
         delegate?.flippedCamera(currentCameraIndex.rawValue)
         addVideoDeviceObserver()
+    }
+    
+    public func destroy() {
+        sessionQueue.async { [weak self] in
+            self?.avSession.stopRunning()
+            self?.avSession = nil
+        }
     }
     
     private func addVideoDeviceObserver() {

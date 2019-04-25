@@ -26,6 +26,7 @@ public protocol AVEngineProtocol : class {
     func setupAVCapture (_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation)
     func updateLensPositionAndLockFocus(_ lensPosition: Float)
     func debug()
+    func destroy()
 }
 
 public protocol AVEngineDelegate: class {
@@ -37,4 +38,8 @@ public protocol AVEngineDelegate: class {
     func startedChangingVideoFormat()
     func didSetFocus(_ focus: AVCaptureDevice.FocusMode, lensPosition: Float)
     func onSampleBuffer(_ sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection, timestamp: CMTime, isVideo: Bool)
+}
+
+public extension AVEngineProtocol {
+    func destroy() { }
 }
