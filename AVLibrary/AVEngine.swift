@@ -52,7 +52,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     
     // MARK: delegate:f
-    weak var delegate: AVEngineDelegate!
+    weak var delegate: AVEngineDelegate?
     
     var pauseCapturing = false
     var hasLockedFocus: Bool {
@@ -234,7 +234,7 @@ class AVEngine: NSObject, AVEngineProtocol {
                 //                UserDefaults.setCameraFormat(formatString)
             }
             self.isRunning = true
-            self.delegate.didStartRunning(format: self.videoFormat)
+            self.delegate?.didStartRunning(format: self.videoFormat)
         }
     }
     
@@ -256,7 +256,7 @@ class AVEngine: NSObject, AVEngineProtocol {
                 self.videoDevice?.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(newFPS))
                 self.videoDevice?.unlockForConfiguration()
                 self.currentFPS = fps
-                self.delegate.didChangeVideoFormat(format)
+                self.delegate?.didChangeVideoFormat(format)
             } catch let error {
                 NSLog(error.localizedDescription)
             }
@@ -358,13 +358,16 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func destroy() {
+        NSLog("AVEngine destroy")
+        print("AVEngine destroy")
         sessionQueue.async { [weak self] in
-            self?.avSession.stopRunning()
+            self?.avSession?.stopRunning()
             self?.avSession = nil
         }
     }
     
     private func addVideoDeviceObserver() {
+        NSLog("addVideoDeviceObserver")
         videoDevice?.addObserver(self, forKeyPath: "focusMode", options: .new, context: nil)
         videoDevice?.addObserver(self, forKeyPath: "lensPosition", options: .new, context: nil)
     }
