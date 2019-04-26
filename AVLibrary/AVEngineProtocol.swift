@@ -12,7 +12,7 @@ public protocol AVEngineProtocol : class {
     var avSession: AVCaptureSession! { get set }
     var availableCameraFormats: [CameraFormat] { get }
     var fps: Int { get }
-    var delegate: AVEngineDelegate! { get set }
+    var delegate: AVEngineDelegate? { get set }
     var pauseCapturing: Bool  { get set }
     var hasLockedFocus: Bool { get }
     var isRunning: Bool { get set }

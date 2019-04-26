@@ -13,7 +13,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var avSession: AVCaptureSession! = nil
     var availableCameraFormats: [CameraFormat] = AVEngineMockupUtils.formats
     var fps = 30
-    weak var delegate: AVEngineDelegate!
+    weak var delegate: AVEngineDelegate?
     var lockingQueue: DispatchQueue!
     var imageQueue = DispatchQueue(label: "avenginemockup.image.queue")
     var pauseCapturing = false
@@ -86,6 +86,6 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     }
     
     func setupAVCapture(_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
-        delegate.didStartRunning(format: nil)
+        delegate?.didStartRunning(format: nil)
     }
 }
