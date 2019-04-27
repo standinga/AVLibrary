@@ -243,7 +243,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             return
         }
         delegate?.startedChangingVideoFormat()
-        sessionQueue.sync { [weak self] in
+        sessionQueue.async { [weak self] in
             NSLog("changeCameraFormat in queue")
             guard let `self` = self else { return }
             do {
