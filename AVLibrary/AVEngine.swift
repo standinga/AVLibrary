@@ -410,12 +410,13 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
         if pauseCapturing { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard let formatDescription =  CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
-        lockQueue.sync {
-            delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp, isVideo: connection == videoConnection)
-            if connection == videoConnection, let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
-                    delegate?.onPixelBuffer(imageBuffer, sampleBuffer: sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
-            } else if (connection == audioConnection) {
-                delegate?.onAudioBuffer(sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
+        lockQueue.async { [weak self] in
+            guard let `self` = self else { return }
+            self.delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp, isVideo: connection == self.videoConnection)
+            if connection == self.videoConnection, let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+                    self.delegate?.onPixelBuffer(imageBuffer, sampleBuffer: sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
+            } else if (connection == self.audioConnection) {
+                self.delegate?.onAudioBuffer(sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
             }
         }
     }
