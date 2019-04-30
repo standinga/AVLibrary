@@ -113,6 +113,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             guard let videoIn = videoIn else { return }
             if  session.canAddInput(videoIn)  {
                 session.addInput(videoIn)
+                NSLog("addedInput")
             }
         } catch {
             NSLog("initvideoinput error")
