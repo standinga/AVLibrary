@@ -235,7 +235,9 @@ class AVEngine: NSObject, AVEngineProtocol {
                 //                UserDefaults.setCameraFormat(formatString)
             }
             self.isRunning = true
-            self.delegate?.didStartRunning(format: self.videoFormat)
+            DispatchQueue.main.async {
+                self.delegate?.didStartRunning(format: self.videoFormat, session: self.avSession)
+            }
         }
     }
     
