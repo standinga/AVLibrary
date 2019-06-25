@@ -13,6 +13,7 @@ import UIKit
 class AVEngine: NSObject, AVEngineProtocol {
     
     var avSession: AVCaptureSession!
+    var currentCameraIndex = AVCaptureDevice.Position.back
     
     // MARK: session management:
     private var sesionPreset = AVCaptureSession.Preset.vga640x480
@@ -36,7 +37,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     private var audioConnection: AVCaptureConnection?
     private var audioCompressionSettings: [AnyHashable : Any]?
     
-    var currentCameraIndex = AVCaptureDevice.Position.back
     private var lockQueue: DispatchQueue!
     private var currentFPS = 0
     
@@ -198,7 +198,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         
         let audioDevice = AVCaptureDevice.default(for: .audio)
         sessionQueue.async { [weak self] in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             self.avSession.beginConfiguration()
             
             self.initVideoInput(videoDevice: self.videoDevice!, session: self.avSession)
@@ -248,7 +248,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         delegate?.startedChangingVideoFormat()
         sessionQueue.async { [weak self] in
             NSLog("changeCameraFormat in queue")
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             do {
                 try
                     self.videoDevice?.lockForConfiguration()
@@ -259,7 +259,7 @@ class AVEngine: NSObject, AVEngineProtocol {
                 self.videoDevice?.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(newFPS))
                 self.videoDevice?.unlockForConfiguration()
                 self.currentFPS = fps
-                self.delegate?.didChangeVideoFormat(format)
+                self.delegate?.didChangeVideoFormat(to: format)
             } catch let error {
                 NSLog(error.localizedDescription)
             }
@@ -302,11 +302,6 @@ class AVEngine: NSObject, AVEngineProtocol {
             NSLog("AVEngine orientationChanged try videoDevice?.lockForConfiguration()")
             try self.videoDevice?.lockForConfiguration()
             self.videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
-            //            if videoDevice?.isFocusModeSupported(.locked) ?? false, let lensPosition = UserDefaults.lensPosition, lensPosition > -1 {
-            //                videoDevice?.setFocusModeLocked(lensPosition: lensPosition) { time in
-            //                    NSLog("AVEngine orientation changed did set focus \(lensPosition)")
-            //                }
-            //            }
         } catch {
             NSLog(error.localizedDescription)
         }
@@ -356,13 +351,12 @@ class AVEngine: NSObject, AVEngineProtocol {
             NSLog(error.localizedDescription)
         }
         avSession.commitConfiguration()
-        delegate?.flippedCamera(currentCameraIndex.rawValue)
+        delegate?.didSwitchCamera(currentCameraIndex.rawValue)
         addVideoDeviceObserver()
     }
     
     public func destroy() {
         NSLog("AVEngine destroy")
-        print("AVEngine destroy")
         sessionQueue.async { [weak self] in
             self?.avSession?.stopRunning()
             self?.avSession = nil
@@ -412,15 +406,9 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if pauseCapturing { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
-        guard let formatDescription =  CMSampleBufferGetFormatDescription(sampleBuffer) else { return }
         lockQueue.async { [weak self] in
-            guard let `self` = self else { return }
-            self.delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp, isVideo: connection == self.videoConnection)
-            if connection == self.videoConnection, let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
-                    self.delegate?.onPixelBuffer(imageBuffer, sampleBuffer: sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
-            } else if (connection == self.audioConnection) {
-                self.delegate?.onAudioBuffer(sampleBuffer, timestamp: timestamp, formatDescription: formatDescription)
-            }
+            guard let self = self else { return }
+            self.delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp)
         }
     }
 }

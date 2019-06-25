@@ -12,8 +12,6 @@ import UIKit
 
 open class AVUtils1 {
     
-    static let maxFrameSize = 1280 * 720 // 1920 * 2070 // * 2
-    
     public static func updateTimestamp(_ sample: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
         var count: CMItemCount = 0
         var osStatus = CMSampleBufferGetSampleTimingInfoArray(sample, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count);
@@ -80,17 +78,15 @@ open class AVUtils1 {
         var transform: CGAffineTransform!
         switch(orientation) {
         case AVCaptureVideoOrientation.portrait:
-            transform = CGAffineTransform(rotationAngle: 0) // ok front
-            break
+            transform = CGAffineTransform(rotationAngle: 0)
         case AVCaptureVideoOrientation.portraitUpsideDown:
-            transform = CGAffineTransform(rotationAngle: 0) // ok front
-            break
+            transform = CGAffineTransform(rotationAngle: 0)
         case AVCaptureVideoOrientation.landscapeLeft:
-            transform = CGAffineTransform(rotationAngle: 0) // ok front
-            break
+            transform = CGAffineTransform(rotationAngle: 0)
         case AVCaptureVideoOrientation.landscapeRight:
-            transform = CGAffineTransform(rotationAngle: 0) // ok front
-            break
+            transform = CGAffineTransform(rotationAngle: 0)
+        @unknown default:
+            transform = CGAffineTransform(rotationAngle: 0)
         }
         return transform;
     }
@@ -100,17 +96,15 @@ open class AVUtils1 {
         switch ( orientation )
         {
         case AVCaptureVideoOrientation.portrait:
-            angle = 0.0;
-            break
+            angle = 0.0
         case AVCaptureVideoOrientation.portraitUpsideDown:
             angle = CGFloat(Double.pi)
-            break
         case AVCaptureVideoOrientation.landscapeRight:
             angle = CGFloat(-Double.pi / 2)
-            break
         case AVCaptureVideoOrientation.landscapeLeft:
             angle = CGFloat(Double.pi / 2)
-            break
+        @unknown default:
+            angle = 0.0
         }
         return angle;
     }
@@ -135,7 +129,7 @@ open class AVUtils1 {
         return nil
     }
     
-    static func availableCameraForamats(_ device: AVCaptureDevice?, currentFormat: AVCaptureDevice.Format?)->[CameraFormat] {
+    static func availableCameraForamats(_ device: AVCaptureDevice?, currentFormat: AVCaptureDevice.Format?, maxFrameSize: Int =  1280 * 720) -> [CameraFormat] {
         var formatsArray = [CameraFormat]()
 
         guard let device = device else { return formatsArray }
@@ -146,8 +140,7 @@ open class AVUtils1 {
             if CMFormatDescriptionGetMediaSubType(description) == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange {
                 let dimensions = CMVideoFormatDescriptionGetDimensions(description)
                 if dimensions.width * dimensions.height > maxFrameSize
-                    || dimensions.width == 480 || dimensions.width == 352
-                {
+                    || dimensions.width == 480 || dimensions.width == 352 {
                     continue
                 }
                 let cameraResolution = "\(dimensions.width) x \(dimensions.height)"

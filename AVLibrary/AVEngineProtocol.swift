@@ -30,14 +30,12 @@ public protocol AVEngineProtocol : class {
 }
 
 public protocol AVEngineDelegate: class {
-    func onPixelBuffer(_ pixelBuffer: CVPixelBuffer, sampleBuffer: CMSampleBuffer, timestamp: CMTime, formatDescription: CMFormatDescription)
-    func onAudioBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime, formatDescription: CMFormatDescription)
     func didStartRunning(format: AVCaptureDevice.Format?, session: AVCaptureSession?)
-    func flippedCamera(_ camIndex: Int)
-    func didChangeVideoFormat(_ format: AVCaptureDevice.Format)
+    func didSwitchCamera(_ camIndex: Int)
+    func didChangeVideoFormat(to format: AVCaptureDevice.Format)
     func startedChangingVideoFormat()
     func didSetFocus(_ focus: AVCaptureDevice.FocusMode, lensPosition: Float)
-    func onSampleBuffer(_ sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection, timestamp: CMTime, isVideo: Bool)
+    func onSampleBuffer(_ sampleBuffer: CMSampleBuffer, connection: AVCaptureConnection, timestamp: CMTime)
 }
 
 public extension AVEngineProtocol {
