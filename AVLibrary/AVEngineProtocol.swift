@@ -17,13 +17,13 @@ public protocol AVEngineProtocol : class {
     var hasLockedFocus: Bool { get }
     var isRunning: Bool { get set }
     var isFocusLocked: Bool { get }
-    var currentCameraIndex: AVCaptureDevice.Position { get set }
+    var currentCameraPosition: AVCaptureDevice.Position { get set }
     
-    func flipCamera()
+    func toggleCamera()
     func orientationChanged(rawValue: Int)
     func toggleFocus()
     func changeCameraFormat(_ format: AVCaptureDevice.Format?, fps: Int)
-    func setupAVCapture (_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation)
+    func setupAVCapture (_ cameraPosition: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation)
     func updateLensPositionAndLockFocus(_ lensPosition: Float)
     func debug()
     func destroy()

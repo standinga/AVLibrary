@@ -13,7 +13,7 @@ import UIKit
 class AVEngine: NSObject, AVEngineProtocol {
     
     var avSession: AVCaptureSession!
-    var currentCameraIndex = AVCaptureDevice.Position.back
+    var currentCameraPosition = AVCaptureDevice.Position.back
     
     // MARK: session management:
     private var sesionPreset = AVCaptureSession.Preset.vga640x480
@@ -39,6 +39,11 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     private var lockQueue: DispatchQueue!
     private var currentFPS = 0
+    
+    private var frontCamera: AVCaptureDevice?
+    private var rearCamera: AVCaptureDevice?
+    private var frontCameraInput: AVCaptureDeviceInput?
+    private var rearCameraInput: AVCaptureDeviceInput?
     
     var availableCameraFormats: [CameraFormat] {
         return AVUtils1.availableCameraForamats(videoDevice, currentFormat: videoFormat )
@@ -184,14 +189,14 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     
-    public func setupAVCapture (_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
-        currentCameraIndex = index
+    public func setupAVCapture (_ cameraPosition: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
+        currentCameraPosition = cameraPosition
         NSLog("AVEngine setupAVCapture")
         requestCameraAccess()
         
         avSession = AVCaptureSession()
         avSession.sessionPreset = sesionPreset
-        videoDevice = getChosenCamera(currentCameraIndex.rawValue)
+        videoDevice = getChosenCamera(currentCameraPosition)
         addVideoDeviceObserver()
         let cameraFormats = AVUtils1.availableCameraForamats(videoDevice, currentFormat: nil )
         let format = AVUtils1.getFormatFromFormatString(cameraFormats, formatString: savedFormatString)
@@ -308,16 +313,12 @@ class AVEngine: NSObject, AVEngineProtocol {
         
     }
     
-    public func flipCamera() {
+    public func toggleCamera() {
         guard let inputs = avSession.inputs as? [AVCaptureDeviceInput] else {return}
-        if (currentCameraIndex == AVCaptureDevice.Position.front) {
-            currentCameraIndex = AVCaptureDevice.Position.back
-        } else {
-            currentCameraIndex = AVCaptureDevice.Position.front
-        }
+        currentCameraPosition = currentCameraPosition == .front ? .back : .front
         avSession.beginConfiguration()
         
-        let newDevice = getChosenCamera(currentCameraIndex.rawValue)
+        let newDevice = getChosenCamera(currentCameraPosition)
         
         var deviceInput: AVCaptureDeviceInput!
         do {
@@ -326,8 +327,6 @@ class AVEngine: NSObject, AVEngineProtocol {
             NSLog(error.localizedDescription)
             return
         }
-        #warning("this should be dealt in implementating delegate")
-        //        UserDefaults.setCameraPosition(currentCameraIndex)
         
         for input in inputs {
             let inputDescription = input.description
@@ -351,7 +350,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             NSLog(error.localizedDescription)
         }
         avSession.commitConfiguration()
-        delegate?.didSwitchCamera(currentCameraIndex.rawValue)
+        delegate?.didSwitchCamera(currentCameraPosition.rawValue)
         addVideoDeviceObserver()
     }
     
@@ -363,6 +362,30 @@ class AVEngine: NSObject, AVEngineProtocol {
         }
     }
     
+    public func initCameras() {
+        if #available(iOS 10.0, *) {
+            let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
+            session.devices.forEach {
+                if $0.position == .front {
+                    frontCamera = $0
+                }
+                if $0.position == .back {
+                    rearCamera = $0
+                }
+            }
+        } else {
+            let devices = AVCaptureDevice.devices(for: .video)
+            devices.forEach {
+                if $0.position == .front {
+                    frontCamera = $0
+                }
+                if $0.position == .back {
+                    rearCamera = $0
+                }
+            }
+        }
+    }
+    
     private func addVideoDeviceObserver() {
         NSLog("addVideoDeviceObserver")
         videoDevice?.addObserver(self, forKeyPath: "focusMode", options: .new, context: nil)
@@ -370,10 +393,10 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     @available(iOS, deprecated: 12.0)
-    fileprivate func getChosenCamera(_ camIndex: Int)->AVCaptureDevice? {
+    fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
         let devices = AVCaptureDevice.devices(for: .video)
         for device in devices {
-            if device.position.rawValue == camIndex {
+            if device.position == cameraPosition {
                 return device
             }
         }

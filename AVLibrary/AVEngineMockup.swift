@@ -19,7 +19,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var pauseCapturing = false
     var hasLockedFocus = true
     var isRunning = true
-    var currentCameraIndex = AVCaptureDevice.Position.back
+    var currentCameraPosition = AVCaptureDevice.Position.back
     private var timer: Timer?
     private var timevalue: Int64 = 46735832821083
     
@@ -69,7 +69,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
 //        delegate?.onPixelBuffer(pixelBuffer, timestamp: time, formatDescription: fd)
     }
     
-    func flipCamera() {
+    func toggleCamera() {
         
     }
     
