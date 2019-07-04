@@ -60,7 +60,6 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
             fatalError("can't create pixelbuffer")
         }
         timevalue += 50000000
-        let time = CMTime(value: timevalue, timescale: 1000000000)
         var formatDescription: CMFormatDescription?
         CMVideoFormatDescriptionCreateForImageBuffer(allocator: nil, imageBuffer: pixelBuffer, formatDescriptionOut: &formatDescription)
         guard let fd = formatDescription else {

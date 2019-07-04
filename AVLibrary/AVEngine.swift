@@ -46,7 +46,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     private var rearCameraInput: AVCaptureDeviceInput?
     
     var availableCameraFormats: [CameraFormat] {
-        return AVUtils1.availableCameraForamats(videoDevice, currentFormat: videoFormat )
+        return AVUtils1.availableCameraForamats(videoDevice, currentFormat: videoFormat, maxFrameSize: 5000 * 5000 )
     }
     
     var isRunning = false
@@ -73,9 +73,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         super.init()
     }
     
-    func debug() {
-        let fmode = videoDevice?.focusMode
-    }
+    func debug() { }
     
     func updateLensPositionAndLockFocus(_ lensPosition: Float) {
         guard let device = videoDevice, device.isFocusModeSupported(.locked) else {
@@ -430,8 +428,7 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
         if pauseCapturing { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         lockQueue.async { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp)
+            self?.delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp, output: output, isVideo: connection == self?.videoConnection)
         }
     }
 }
