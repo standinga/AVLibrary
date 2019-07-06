@@ -231,11 +231,6 @@ class AVEngine: NSObject, AVEngineProtocol {
                 }
             }
             
-            if (self.videoFormat != nil) {
-                let formatString = AVUtils1.formatToString(self.videoFormat)
-                #warning("needs to be done where delegate is implemented")
-                //                UserDefaults.setCameraFormat(formatString)
-            }
             self.isRunning = true
             DispatchQueue.main.async {
                 self.delegate?.didStartRunning(format: self.videoFormat, session: self.avSession)
@@ -249,22 +244,25 @@ class AVEngine: NSObject, AVEngineProtocol {
         }
         delegate?.startedChangingVideoFormat()
         sessionQueue.async { [weak self] in
-            NSLog("changeCameraFormat in queue")
-            guard let self = self else { return }
-            do {
-                try
-                    self.videoDevice?.lockForConfiguration()
-                self.setCustomFormatOrDefault(format, device: self.videoDevice)
-                let maxFPS = format.videoSupportedFrameRateRanges[0].maxFrameRate
-                let newFPS = min(maxFPS, Float64(fps))
-                self.videoDevice?.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: Int32(newFPS))
-                self.videoDevice?.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(newFPS))
-                self.videoDevice?.unlockForConfiguration()
-                self.currentFPS = fps
-                self.delegate?.didChangeVideoFormat(to: format)
-            } catch let error {
-                NSLog(error.localizedDescription)
-            }
+            self?.changeCameraFormatSync(format, fps: fps)
+        }
+    }
+    
+    private func changeCameraFormatSync(_ format: AVCaptureDevice.Format, fps: Int) {
+        NSLog("changeCameraFormatSync in queue")
+        do {
+            try
+                videoDevice?.lockForConfiguration()
+            setCustomFormatOrDefault(format, device: videoDevice)
+            let maxFPS = format.videoSupportedFrameRateRanges[0].maxFrameRate
+            let newFPS = min(maxFPS, Float64(fps))
+            videoDevice?.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: Int32(newFPS))
+            videoDevice?.activeVideoMaxFrameDuration = CMTimeMake(value: 1, timescale: Int32(newFPS))
+            videoDevice?.unlockForConfiguration()
+            currentFPS = fps
+            delegate?.didChangeVideoFormat(to: format)
+        } catch let error {
+            NSLog(error.localizedDescription)
         }
     }
     
@@ -297,13 +295,13 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     public func orientationChanged(rawValue: Int) {
         defer {
-            self.videoDevice?.unlockForConfiguration()
+            videoDevice?.unlockForConfiguration()
             NSLog("AVEngine videoDevice?.unlockForConfiguration()")
         }
         do {
             NSLog("AVEngine orientationChanged try videoDevice?.lockForConfiguration()")
-            try self.videoDevice?.lockForConfiguration()
-            self.videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
+            try videoDevice?.lockForConfiguration()
+            videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
         } catch {
             NSLog(error.localizedDescription)
         }
@@ -311,6 +309,14 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func toggleCamera() {
+        sessionQueue.async {
+            [weak self] in
+            self?.toggleCameraSync()
+        }
+    }
+    
+    private func toggleCameraSync() {
+        
         guard let inputs = avSession.inputs as? [AVCaptureDeviceInput] else {return}
         currentCameraPosition = currentCameraPosition == .front ? .back : .front
         avSession.beginConfiguration()
