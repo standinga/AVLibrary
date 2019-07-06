@@ -14,6 +14,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     var avSession: AVCaptureSession!
     var currentCameraPosition = AVCaptureDevice.Position.back
+    var videoDevice: AVCaptureDevice?
     
     // MARK: session management:
     private var sesionPreset = AVCaptureSession.Preset.vga640x480
@@ -26,7 +27,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     private var videoIn: AVCaptureDeviceInput?
     private var videoOut: AVCaptureVideoDataOutput?
-    var videoDevice: AVCaptureDevice?
     private var videoFormat: AVCaptureDevice.Format? {
         return videoDevice?.activeFormat
     }
@@ -54,7 +54,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     var fps: Int {
         return Int(videoDevice?.activeVideoMinFrameDuration.timescale ?? 0)
     }
-    
     
     // MARK: delegate:f
     weak var delegate: AVEngineDelegate?
