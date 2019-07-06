@@ -348,7 +348,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             NSLog(error.localizedDescription)
         }
         avSession.commitConfiguration()
-        delegate?.didSwitchCamera(currentCameraPosition.rawValue)
+        delegate?.didSwitchCamera(to: currentCameraPosition)
         addVideoDeviceObserver()
     }
     
