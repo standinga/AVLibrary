@@ -309,14 +309,13 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func toggleCamera() {
-        let orientation = AVCaptureVideoOrientation(rawValue: UIApplication.shared.statusBarOrientation.deviceOrientation.rawValue) ?? .portrait
         sessionQueue.async {
             [weak self] in
-            self?.toggleCameraSync(withOrientation: orientation)
+            self?.toggleCameraSync()
         }
     }
     
-    private func toggleCameraSync(withOrientation orientation: AVCaptureVideoOrientation) {
+    private func toggleCameraSync() {
         
         guard let inputs = avSession.inputs as? [AVCaptureDeviceInput] else {return}
         currentCameraPosition = currentCameraPosition == .front ? .back : .front
@@ -342,8 +341,6 @@ class AVEngine: NSObject, AVEngineProtocol {
         if avSession.canAddInput(deviceInput) {
             avSession.addInput(deviceInput)
         }
-        videoConnection = videoOut!.connection(with: .video)
-        videoConnection?.videoOrientation = orientation
         videoDevice = newDevice
         do {
             try
