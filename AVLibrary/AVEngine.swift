@@ -10,11 +10,38 @@ import Foundation
 import AVFoundation
 import UIKit
 
+public class AVLogger {
+    private var logs: [String] = []
+    private let queue = DispatchQueue.init(label: "logs", qos: .userInteractive, attributes: .concurrent)
+    
+    func addLog(_ log: String) {
+        queue.async(flags: .barrier) {
+            self.logs += [log]
+        }
+    }
+    
+    func recentLogs(_ number: Int) -> [String] {
+        return queue.sync {
+            let slice = logs
+            return slice.reversed()[0..<min(number, slice.count)] + []
+        }
+    }
+    
+    public func printRecentLogs(_ number: Int) {
+        let recent = recentLogs(number)
+        recent.forEach {
+            print($0)
+        }
+    }
+}
+
 class AVEngine: NSObject, AVEngineProtocol {
     
     var avSession: AVCaptureSession!
     var currentCameraPosition = AVCaptureDevice.Position.back
     var videoDevice: AVCaptureDevice?
+    var frame = 0
+    var logger = AVLogger()
     
     // MARK: session management:
     private var sesionPreset = AVCaptureSession.Preset.vga640x480
@@ -31,10 +58,10 @@ class AVEngine: NSObject, AVEngineProtocol {
         return videoDevice?.activeFormat
     }
     private var videoConnection: AVCaptureConnection?
+    private var audioConnection: AVCaptureConnection?
     
     private var audioIn: AVCaptureDeviceInput?
     private var audioOut: AVCaptureAudioDataOutput?
-    private var audioConnection: AVCaptureConnection?
     private var audioCompressionSettings: [AnyHashable : Any]?
     
     private var lockQueue: DispatchQueue!
@@ -98,8 +125,6 @@ class AVEngine: NSObject, AVEngineProtocol {
                 let fm = AVCaptureDevice.FocusMode(rawValue: rawFocusMode) ?? .continuousAutoFocus
                 delegate?.didSetFocus(lensPosition > 0.9999 ? .continuousAutoFocus : fm, lensPosition: lensPosition)
             }
-        } else {
-            //            print("AVEngine lens")
         }
     }
     
@@ -316,8 +341,9 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     private func toggleCameraSync() {
-        
+        logger.addLog("\(frame) toggleCameraSync")
         guard let inputs = avSession.inputs as? [AVCaptureDeviceInput] else {return}
+        pauseCapturing = true
         currentCameraPosition = currentCameraPosition == .front ? .back : .front
         avSession.beginConfiguration()
         
@@ -346,6 +372,8 @@ class AVEngine: NSObject, AVEngineProtocol {
             try
                 videoDevice?.lockForConfiguration()
             setCustomFormatOrDefault(nil, device: videoDevice)
+            videoConnection = videoOut!.connection(with: .video)
+            videoDevice = newDevice
             videoDevice?.unlockForConfiguration()
         } catch {
             NSLog(error.localizedDescription)
@@ -353,6 +381,8 @@ class AVEngine: NSObject, AVEngineProtocol {
         avSession.commitConfiguration()
         delegate?.didSwitchCamera(to: currentCameraPosition)
         addVideoDeviceObserver()
+        pauseCapturing = false
+        logger.addLog("\(frame) finished toggleCameraSync")
     }
     
     public func destroy() {
@@ -428,10 +458,17 @@ class AVEngine: NSObject, AVEngineProtocol {
 extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        if pauseCapturing { return }
-        let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         lockQueue.async { [weak self] in
-            self?.delegate?.onSampleBuffer(sampleBuffer, connection: connection, timestamp: timestamp, output: output, isVideo: connection == self?.videoConnection)
+            self?.logger.addLog("\(self?.frame ?? -1) captureOutput, \(connection.inputPorts.first!)")
+            self?.frame += 1
+        if self?.pauseCapturing ?? false { return }
+        let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        guard let port = connection.inputPorts.first else { return }
+            self?.delegate?.onSampleBuffer(sampleBuffer,
+                                           connection: connection,
+                                           timestamp: timestamp,
+                                           output: output,
+                                           isVideo: port.mediaType == .video)
         }
     }
 }

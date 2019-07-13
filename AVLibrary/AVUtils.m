@@ -74,7 +74,6 @@
     CMSampleBufferRef copyBuffer = NULL;
     OSStatus status = -1;
     
-    
     /* Format Description */
     
     AudioStreamBasicDescription audioFormat = *CMAudioFormatDescriptionGetStreamBasicDescription((CMAudioFormatDescriptionRef) CMSampleBufferGetFormatDescription(sampleBuffer));

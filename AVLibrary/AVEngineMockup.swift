@@ -13,6 +13,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var avSession: AVCaptureSession! = nil
     var availableCameraFormats: [CameraFormat] = AVEngineMockupUtils.formats
     var fps = 30
+    var logger: AVLogger = AVLogger()
     weak var delegate: AVEngineDelegate?
     var lockingQueue: DispatchQueue!
     var imageQueue = DispatchQueue(label: "avenginemockup.image.queue")
