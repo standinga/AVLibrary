@@ -14,7 +14,7 @@ public protocol AVEngineProtocol : class {
     var fps: Int { get }
     var delegate: AVEngineDelegate? { get set }
     var pauseCapturing: Bool  { get set }
-    var hasLockedFocus: Bool { get }
+    var supportsLockedFocus: Bool { get }
     var isRunning: Bool { get set }
     var isFocusLocked: Bool { get }
     var currentCameraPosition: AVCaptureDevice.Position { get set }

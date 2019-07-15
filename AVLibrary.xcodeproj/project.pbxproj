@@ -19,8 +19,13 @@
 		9030CCAF2259595900510F1C /* MetaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAB2259595900510F1C /* MetaData.swift */; };
 		9030CCB02259595900510F1C /* AVUtils1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA92259595900510F1C /* AVUtils1.swift */; };
 		9030CCB12259595900510F1C /* AVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAC2259595900510F1C /* AVUtils.m */; };
-		9030CCB322596D9F00510F1C /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCB222596D9F00510F1C /* UIImage+.swift */; };
-		9030CCB522596DC000510F1C /* UIInterfaceOrientation+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCB422596DC000510F1C /* UIInterfaceOrientation+.swift */; };
+		9056628122DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056627C22DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift */; };
+		9056628222DD2F4F00033428 /* AVCaptureFocusMode+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056627D22DD2F4F00033428 /* AVCaptureFocusMode+Description.swift */; };
+		9056628322DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056627E22DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift */; };
+		9056628422DD2F4F00033428 /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056627F22DD2F4F00033428 /* UIImage+.swift */; };
+		9056628522DD2F4F00033428 /* UIInterfaceOrientation+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056628022DD2F4F00033428 /* UIInterfaceOrientation+.swift */; };
+		9056628722DD2F8F00033428 /* MockupAVFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056628622DD2F8F00033428 /* MockupAVFormat.swift */; };
+		9056628922DD2FAB00033428 /* AVEngineData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056628822DD2FAB00033428 /* AVEngineData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,8 +55,13 @@
 		9030CCAB2259595900510F1C /* MetaData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetaData.swift; sourceTree = "<group>"; };
 		9030CCAC2259595900510F1C /* AVUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AVUtils.m; sourceTree = "<group>"; };
 		9030CCAD2259595900510F1C /* AVUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVUtils.h; sourceTree = "<group>"; };
-		9030CCB222596D9F00510F1C /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
-		9030CCB422596DC000510F1C /* UIInterfaceOrientation+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIInterfaceOrientation+.swift"; sourceTree = "<group>"; };
+		9056627C22DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVCaptureDevicePosition+Description.swift"; sourceTree = "<group>"; };
+		9056627D22DD2F4F00033428 /* AVCaptureFocusMode+Description.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVCaptureFocusMode+Description.swift"; sourceTree = "<group>"; };
+		9056627E22DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AVCaptureVideoOrientation+Description.swift"; sourceTree = "<group>"; };
+		9056627F22DD2F4F00033428 /* UIImage+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
+		9056628022DD2F4F00033428 /* UIInterfaceOrientation+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIInterfaceOrientation+.swift"; sourceTree = "<group>"; };
+		9056628622DD2F8F00033428 /* MockupAVFormat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MockupAVFormat.swift; path = AVLibrary/MockupAVFormat.swift; sourceTree = SOURCE_ROOT; };
+		9056628822DD2FAB00033428 /* AVEngineData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEngineData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,13 +104,14 @@
 		9030CC85225958C600510F1C /* AVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				9056627B22DD2F4F00033428 /* Extensions */,
 				9030CCA12259590300510F1C /* AVEngine.swift */,
+				9056628622DD2F8F00033428 /* MockupAVFormat.swift */,
+				9056628822DD2FAB00033428 /* AVEngineData.swift */,
 				9030CC9F2259590300510F1C /* AVEngineFactory.swift */,
 				9030CCA22259590300510F1C /* AVEngineMockup.swift */,
 				9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */,
 				9030CCA02259590300510F1C /* AVEngineProtocol.swift */,
-				9030CCB422596DC000510F1C /* UIInterfaceOrientation+.swift */,
-				9030CCB222596D9F00510F1C /* UIImage+.swift */,
 				9030CCAD2259595900510F1C /* AVUtils.h */,
 				9030CCAC2259595900510F1C /* AVUtils.m */,
 				9030CCA92259595900510F1C /* AVUtils1.swift */,
@@ -119,6 +130,18 @@
 				9030CC93225958C600510F1C /* Info.plist */,
 			);
 			path = AVLibraryTests;
+			sourceTree = "<group>";
+		};
+		9056627B22DD2F4F00033428 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				9056627C22DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift */,
+				9056627D22DD2F4F00033428 /* AVCaptureFocusMode+Description.swift */,
+				9056627E22DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift */,
+				9056627F22DD2F4F00033428 /* UIImage+.swift */,
+				9056628022DD2F4F00033428 /* UIInterfaceOrientation+.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,14 +256,19 @@
 				9030CCB12259595900510F1C /* AVUtils.m in Sources */,
 				9030CCA32259590300510F1C /* AVEngineMockupUtils.swift in Sources */,
 				9030CCAE2259595900510F1C /* CameraFormat.swift in Sources */,
-				9030CCB522596DC000510F1C /* UIInterfaceOrientation+.swift in Sources */,
+				9056628222DD2F4F00033428 /* AVCaptureFocusMode+Description.swift in Sources */,
+				9056628922DD2FAB00033428 /* AVEngineData.swift in Sources */,
 				9030CCB02259595900510F1C /* AVUtils1.swift in Sources */,
 				9030CCA52259590300510F1C /* AVEngineFactory.swift in Sources */,
 				9030CCA82259590300510F1C /* AVEngineMockup.swift in Sources */,
+				9056628122DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift in Sources */,
 				9030CCA72259590300510F1C /* AVEngine.swift in Sources */,
-				9030CCB322596D9F00510F1C /* UIImage+.swift in Sources */,
+				9056628722DD2F8F00033428 /* MockupAVFormat.swift in Sources */,
 				9030CCA62259590300510F1C /* AVEngineProtocol.swift in Sources */,
+				9056628422DD2F4F00033428 /* UIImage+.swift in Sources */,
 				9030CCAF2259595900510F1C /* MetaData.swift in Sources */,
+				9056628522DD2F4F00033428 /* UIInterfaceOrientation+.swift in Sources */,
+				9056628322DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

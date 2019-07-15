@@ -18,7 +18,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var lockingQueue: DispatchQueue!
     var imageQueue = DispatchQueue(label: "avenginemockup.image.queue")
     var pauseCapturing = false
-    var hasLockedFocus = true
+    var supportsLockedFocus = true
     var isRunning = true
     var currentCameraPosition = AVCaptureDevice.Position.back
     private var timer: Timer?
@@ -86,7 +86,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     }
     
     func setupAVCapture(_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
-        let format = MockupAVFormat("asdf")
+        let format = MockupAVFormat()
         let session = AVCaptureSession()
         delegate?.didStartRunning(format: format, session: session, avData: AVEngineData(format: format, session: session, cameraPosition: .front, fps: 30, focus: .autoFocus, lensPosition: 1.4, videoOrientation: .portrait))
     }

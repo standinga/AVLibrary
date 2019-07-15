@@ -86,7 +86,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     weak var delegate: AVEngineDelegate?
     
     var pauseCapturing = false
-    var hasLockedFocus: Bool {
+    var supportsLockedFocus: Bool {
         return videoDevice?.isFocusModeSupported(.locked) ?? false
     }
     

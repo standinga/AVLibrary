@@ -8,6 +8,6 @@
 import AVFoundation
 
 public class MockupAVFormat: AVCaptureDevice.Format {
-    public init(_ mocked: String) {
+    public init(_ mocked: Void = ()) {
     }
 }
