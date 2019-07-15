@@ -257,8 +257,16 @@ class AVEngine: NSObject, AVEngineProtocol {
             }
             
             self.isRunning = true
+            
+            guard let format = self.videoFormat, let session = self.avSession else {
+                return
+            }
+            
+            let avData = AVEngineData(format: format, session: self.avSession, cameraPosition: self.currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation)
+            
             DispatchQueue.main.async {
-                self.delegate?.didStartRunning(format: self.videoFormat, session: self.avSession)
+                print(avData.description)
+                self.delegate?.didStartRunning(format: format, session: session, avData: avData)
             }
         }
     }
