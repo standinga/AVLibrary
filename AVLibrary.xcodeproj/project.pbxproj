@@ -104,7 +104,6 @@
 		9030CC85225958C600510F1C /* AVLibrary */ = {
 			isa = PBXGroup;
 			children = (
-				9056627B22DD2F4F00033428 /* Extensions */,
 				9030CCA12259590300510F1C /* AVEngine.swift */,
 				9056628622DD2F8F00033428 /* MockupAVFormat.swift */,
 				9056628822DD2FAB00033428 /* AVEngineData.swift */,
@@ -119,6 +118,11 @@
 				9030CCAB2259595900510F1C /* MetaData.swift */,
 				9030CC86225958C600510F1C /* AVLibrary.h */,
 				9030CC87225958C600510F1C /* Info.plist */,
+				9056627C22DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift */,
+				9056627D22DD2F4F00033428 /* AVCaptureFocusMode+Description.swift */,
+				9056627E22DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift */,
+				9056627F22DD2F4F00033428 /* UIImage+.swift */,
+				9056628022DD2F4F00033428 /* UIInterfaceOrientation+.swift */,
 			);
 			path = AVLibrary;
 			sourceTree = "<group>";
@@ -130,18 +134,6 @@
 				9030CC93225958C600510F1C /* Info.plist */,
 			);
 			path = AVLibraryTests;
-			sourceTree = "<group>";
-		};
-		9056627B22DD2F4F00033428 /* Extensions */ = {
-			isa = PBXGroup;
-			children = (
-				9056627C22DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift */,
-				9056627D22DD2F4F00033428 /* AVCaptureFocusMode+Description.swift */,
-				9056627E22DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift */,
-				9056627F22DD2F4F00033428 /* UIImage+.swift */,
-				9056628022DD2F4F00033428 /* UIInterfaceOrientation+.swift */,
-			);
-			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
