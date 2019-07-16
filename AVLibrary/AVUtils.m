@@ -163,7 +163,9 @@
     // copy pixel buffer:
     NSDictionary *pixelBufferAttributes = [NSDictionary dictionaryWithObjectsAndKeys:[NSDictionary dictionary] , (id) kCVPixelBufferIOSurfacePropertiesKey, nil]; //  need to attach IOSurface in order to record video!
     
-    CVPixelBufferCreate(kCFAllocatorDefault, bufferWidth, bufferHeight, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange,(__bridge CFDictionaryRef) pixelBufferAttributes, bufferCopy);
+    CVReturn status = CVPixelBufferCreate(kCFAllocatorDefault, bufferWidth, bufferHeight, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange,(__bridge CFDictionaryRef) pixelBufferAttributes, bufferCopy);
+    
+    NSParameterAssert(status == kCVReturnSuccess && bufferCopy != NULL);
     
     CVPixelBufferLockBaseAddress(*bufferCopy, 0);
     CVBufferPropagateAttachments(pixelBuffer, * bufferCopy); // nned to copy attachments in order to be able to record video frames!!!
@@ -172,7 +174,28 @@
     
     size_t size = CVPixelBufferGetDataSize(*bufferCopy);
     memcpy(copyBaseAddress, baseAddress, size);
+    
+    pixelBufferAttributes = NULL;
     CVPixelBufferUnlockBaseAddress(*bufferCopy, 0);
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 }
+
++(void)copyVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer bufferCopy:(CMSampleBufferRef *)bufferCopy {
+    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
+    CVImageBufferRef pixelBufferCopy = NULL;
+    [AVUtils copyVideoFrame:pixelBuffer bufferCopy: &pixelBufferCopy];
+    
+    OSStatus status = CMSampleBufferCreateCopy(kCFAllocatorDefault, sampleBuffer, bufferCopy);
+    NSParameterAssert(status == 0);
+    CMSampleTimingInfo sampleTiming;
+    CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &sampleTiming);
+    sampleTiming.duration = kCMTimeInvalid;
+    sampleTiming.decodeTimeStamp = kCMTimeInvalid;
+    
+    status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBufferCopy, CMSampleBufferGetFormatDescription(sampleBuffer), &sampleTiming, bufferCopy);
+    NSParameterAssert(status == 0);
+    CVPixelBufferRelease(pixelBuffer); // without it camera stops sending new frames
+    pixelBuffer = NULL;
+}
+
 @end
