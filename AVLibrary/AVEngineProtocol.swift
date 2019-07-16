@@ -42,3 +42,8 @@ public protocol AVEngineDelegate: class {
 public extension AVEngineProtocol {
     func destroy() { }
 }
+
+public extension AVEngineDelegate {
+    func didSetFocus(_ focus: AVCaptureDevice.FocusMode, lensPosition: Float) { }
+    func startedChangingVideoFormat() { }
+}
