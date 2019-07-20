@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		900C538322E2078C00B86A9B /* sky.png in Resources */ = {isa = PBXBuildFile; fileRef = 900C538222E2078C00B86A9B /* sky.png */; };
+		900C538722E20D2E00B86A9B /* MockupAVCaptureOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 900C538622E20D2E00B86A9B /* MockupAVCaptureOutput.swift */; };
 		9030CC8D225958C600510F1C /* AVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9030CC83225958C600510F1C /* AVLibrary.framework */; };
 		9030CC92225958C600510F1C /* AVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CC91225958C600510F1C /* AVLibraryTests.swift */; };
 		9030CC94225958C600510F1C /* AVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 9030CC86225958C600510F1C /* AVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -39,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		900C538222E2078C00B86A9B /* sky.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sky.png; sourceTree = "<group>"; };
+		900C538622E20D2E00B86A9B /* MockupAVCaptureOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockupAVCaptureOutput.swift; sourceTree = "<group>"; };
 		9030CC83225958C600510F1C /* AVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9030CC86225958C600510F1C /* AVLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AVLibrary.h; sourceTree = "<group>"; };
 		9030CC87225958C600510F1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -104,11 +108,13 @@
 		9030CC85225958C600510F1C /* AVLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				900C538222E2078C00B86A9B /* sky.png */,
 				9030CCA12259590300510F1C /* AVEngine.swift */,
 				9056628622DD2F8F00033428 /* MockupAVFormat.swift */,
 				9056628822DD2FAB00033428 /* AVEngineData.swift */,
 				9030CC9F2259590300510F1C /* AVEngineFactory.swift */,
 				9030CCA22259590300510F1C /* AVEngineMockup.swift */,
+				900C538622E20D2E00B86A9B /* MockupAVCaptureOutput.swift */,
 				9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */,
 				9030CCA02259590300510F1C /* AVEngineProtocol.swift */,
 				9030CCAD2259595900510F1C /* AVUtils.h */,
@@ -228,6 +234,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				900C538322E2078C00B86A9B /* sky.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +263,7 @@
 				9056628122DD2F4F00033428 /* AVCaptureDevicePosition+Description.swift in Sources */,
 				9030CCA72259590300510F1C /* AVEngine.swift in Sources */,
 				9056628722DD2F8F00033428 /* MockupAVFormat.swift in Sources */,
+				900C538722E20D2E00B86A9B /* MockupAVCaptureOutput.swift in Sources */,
 				9030CCA62259590300510F1C /* AVEngineProtocol.swift in Sources */,
 				9056628422DD2F4F00033428 /* UIImage+.swift in Sources */,
 				9030CCAF2259595900510F1C /* MetaData.swift in Sources */,

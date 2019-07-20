@@ -8,6 +8,11 @@
 import AVFoundation
 
 public class MockupAVFormat: AVCaptureDevice.Format {
-    public init(_ mocked: Void = ()) {
+    
+    var mockFormatDescription: CMFormatDescription!
+    
+    override public var formatDescription: CMFormatDescription {
+        return mockFormatDescription
     }
+    public init(_ mocked: Void = ()) { }
 }
