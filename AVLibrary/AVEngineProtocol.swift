@@ -18,7 +18,6 @@ public protocol AVEngineProtocol : class {
     var isRunning: Bool { get set }
     var isFocusLocked: Bool { get }
     var currentCameraPosition: AVCaptureDevice.Position { get set }
-    var logger: AVLogger { get }
     
     func toggleCamera()
     func orientationChanged(rawValue: Int)

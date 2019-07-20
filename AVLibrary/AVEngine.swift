@@ -10,38 +10,11 @@ import Foundation
 import AVFoundation
 import UIKit
 
-public class AVLogger {
-    private var logs: [String] = []
-    private let queue = DispatchQueue.init(label: "logs", qos: .userInteractive, attributes: .concurrent)
-    
-    func addLog(_ log: String) {
-        queue.async(flags: .barrier) {
-            self.logs += [log]
-        }
-    }
-    
-    func recentLogs(_ number: Int) -> [String] {
-        return queue.sync {
-            let slice = logs
-            return slice.reversed()[0..<min(number, slice.count)] + []
-        }
-    }
-    
-    public func printRecentLogs(_ number: Int) {
-        let recent = recentLogs(number)
-        recent.forEach {
-            print($0)
-        }
-    }
-}
-
 class AVEngine: NSObject, AVEngineProtocol {
     
     var avSession: AVCaptureSession!
     var currentCameraPosition = AVCaptureDevice.Position.back
     var videoDevice: AVCaptureDevice?
-    var frame = 0
-    var logger = AVLogger()
     
     // MARK: session management:
     private var sesionPreset = AVCaptureSession.Preset.vga640x480
@@ -349,7 +322,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     private func toggleCameraSync() {
-        logger.addLog("\(frame) toggleCameraSync")
         guard let inputs = avSession.inputs as? [AVCaptureDeviceInput] else {return}
         pauseCapturing = true
         currentCameraPosition = currentCameraPosition == .front ? .back : .front
@@ -390,7 +362,6 @@ class AVEngine: NSObject, AVEngineProtocol {
         delegate?.didSwitchCamera(to: currentCameraPosition)
         addVideoDeviceObserver()
         pauseCapturing = false
-        logger.addLog("\(frame) finished toggleCameraSync")
     }
     
     public func destroy() {
@@ -467,8 +438,6 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         lockQueue.async { [weak self] in
-            self?.logger.addLog("\(self?.frame ?? -1) captureOutput, \(connection.inputPorts.first!)")
-            self?.frame += 1
         if self?.pauseCapturing ?? false { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard let port = connection.inputPorts.first else { return }
