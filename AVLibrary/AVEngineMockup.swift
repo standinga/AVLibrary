@@ -37,7 +37,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
         
         super.init()
         
-        let image = UIImage(named: "sky", in: Bundle(for: type(of: self)), compatibleWith: nil)!
+        let image = UIImage(named: "tree1080_1920.jpg", in: Bundle(for: type(of: self)), compatibleWith: nil)!
         
         let pixelBuffer = createCVPixelBuffer(from: image)
         setAttachments(to: pixelBuffer)
@@ -178,6 +178,8 @@ private extension AVEngineMockup {
         guard let context = CGContext(data: pixelAddress, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(pixelBuffer), space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) else {
             fatalError("context: \(#function)")
         }
+        context.translateBy(x: 0, y: image.size.height)
+        context.scaleBy(x: 1.0, y: -1.0) // different coordinates (from bottom instead of from top)
         UIGraphicsPushContext(context)
         image.draw(in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
         UIGraphicsPopContext()
