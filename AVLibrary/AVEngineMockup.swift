@@ -60,14 +60,27 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
             fatalError("cgImage nil \(#function)")
         }
         let attrs = [kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue as CFBoolean,
+                     kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue as CFBoolean,
                      kCVPixelBufferIOSurfacePropertiesKey: [:] as CFDictionary // without kCVPixelBufferIOSurfacePropertiesKey key the AVAssetWriter won't append sample buffers with error: AVAssetWriterInput append fails with error code -11800 AVErrorUnknown -12780
                      ] as CFDictionary
         var pbuff: CVPixelBuffer? = nil
-        let status = CVPixelBufferCreate(kCFAllocatorDefault, cgImage.width, cgImage.height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, attrs, &pbuff)
+        let status = CVPixelBufferCreate(kCFAllocatorDefault, cgImage.width, cgImage.height, kCVPixelFormatType_32ARGB, attrs, &pbuff)
         
         guard status == kCVReturnSuccess else { fatalError("status error \(status)")}
         guard let pixelBuffer = pbuff else { fatalError("pixelbuffer")}
         
+        CVPixelBufferLockBaseAddress(pixelBuffer, [])
+        guard let pixelAddress = CVPixelBufferGetBaseAddress(pixelBuffer) else {
+             fatalError("pointer null \(#function)")
+        }
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        guard let context = CGContext(data: pixelAddress, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8, bytesPerRow: CVPixelBufferGetBytesPerRow(pixelBuffer), space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) else {
+            fatalError("context: \(#function)")
+        }
+        UIGraphicsPushContext(context)
+        image.draw(in: CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height))
+        UIGraphicsPopContext()
+        CVPixelBufferUnlockBaseAddress(pixelBuffer, [])
         return pixelBuffer
     }
     
