@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVLibrary/AVUtils.h>
 
 //! Project version number for AVLibrary.
 FOUNDATION_EXPORT double AVLibraryVersionNumber;

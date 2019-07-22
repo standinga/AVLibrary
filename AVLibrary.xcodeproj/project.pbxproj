@@ -12,6 +12,7 @@
 		9011A7AE22E2ACD60053785E /* tree1080_1920.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9011A7AC22E2ACD60053785E /* tree1080_1920.jpg */; };
 		9011A7AF22E2ACD60053785E /* tree1280_720.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9011A7AD22E2ACD60053785E /* tree1280_720.jpg */; };
 		902833B822E5F59100DF513E /* MockupAVFrameRateRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902833B722E5F59100DF513E /* MockupAVFrameRateRange.swift */; };
+		902833BF22E5FB6800DF513E /* AVUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9030CCAD2259595900510F1C /* AVUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9030CC8D225958C600510F1C /* AVLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9030CC83225958C600510F1C /* AVLibrary.framework */; };
 		9030CC92225958C600510F1C /* AVLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CC91225958C600510F1C /* AVLibraryTests.swift */; };
 		9030CC94225958C600510F1C /* AVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 9030CC86225958C600510F1C /* AVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -159,6 +160,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9030CC94225958C600510F1C /* AVLibrary.h in Headers */,
+				902833BF22E5FB6800DF513E /* AVUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,7 +357,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -413,7 +415,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
