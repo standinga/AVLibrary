@@ -105,9 +105,14 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
 
 private extension AVEngineMockup {
     func setAttachments(to pixelBuffer: CVPixelBuffer) {
-        let dict = [kCVImageBufferColorPrimariesKey: kCVImageBufferColorPrimaries_ITU_R_709_2, kCVImageBufferTransferFunctionKey: kCVImageBufferTransferFunction_ITU_R_709_2, kCVImageBufferYCbCrMatrixKey: kCVImageBufferYCbCrMatrix_ITU_R_601_4] as CFDictionary
-        
+        let dict = createExtensions()
         CVBufferSetAttachments(pixelBuffer, dict, CVAttachmentMode(rawValue: kCMAttachmentMode_ShouldPropagate)!)
+    }
+    
+    func createExtensions() -> CFDictionary {
+        let dict = [kCVImageBufferColorPrimariesKey: kCVImageBufferColorPrimaries_ITU_R_709_2, kCVImageBufferTransferFunctionKey: kCVImageBufferTransferFunction_ITU_R_709_2, kCVImageBufferYCbCrMatrixKey: kCVImageBufferYCbCrMatrix_ITU_R_601_4
+            ] as CFDictionary
+        return dict
     }
     
     func createSampleBufferWith(pixelBuffer: CVPixelBuffer) -> CMSampleBuffer {
@@ -115,19 +120,21 @@ private extension AVEngineMockup {
         info.presentationTimeStamp = .zero
         info.duration = .invalid
         info.decodeTimeStamp = .invalid
-        
         var formatDesc: CMFormatDescription? = nil
         CMVideoFormatDescriptionCreateForImageBuffer(allocator: kCFAllocatorDefault, imageBuffer: pixelBuffer, formatDescriptionOut: &formatDesc)
         guard let formatDescription = formatDesc else {
             fatalError("formatDescription")
         }
-        
         var sampleBuff: CMSampleBuffer? = nil
-        CMSampleBufferCreateReadyWithImageBuffer(allocator: kCFAllocatorDefault,
+        let status = CMSampleBufferCreateReadyWithImageBuffer(allocator: kCFAllocatorDefault,
                                                  imageBuffer: pixelBuffer,
                                                  formatDescription: formatDescription,
                                                  sampleTiming: &info,
                                                  sampleBufferOut: &sampleBuff)
+        
+        guard status == noErr else {
+            fatalError("CMSampleBufferCreateReadyWithImageBuffer failed \(status)")
+        }
         guard let sampleBuffer = sampleBuff else {
             fatalError("samplebuffer")
         }
