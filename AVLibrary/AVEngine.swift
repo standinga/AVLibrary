@@ -304,14 +304,10 @@ class AVEngine: NSObject, AVEngineProtocol {
             videoDevice?.unlockForConfiguration()
             NSLog("AVEngine videoDevice?.unlockForConfiguration()")
         }
-        do {
+        sessionQueue.async { [weak self] in
             NSLog("AVEngine orientationChanged try videoDevice?.lockForConfiguration()")
-            try videoDevice?.lockForConfiguration()
-            videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
-        } catch {
-            NSLog(error.localizedDescription)
+            self?.videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
         }
-        
     }
     
     public func toggleCamera() {
