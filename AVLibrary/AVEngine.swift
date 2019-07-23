@@ -300,13 +300,16 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func orientationChanged(rawValue: Int) {
-        defer {
-            videoDevice?.unlockForConfiguration()
-            NSLog("AVEngine videoDevice?.unlockForConfiguration()")
-        }
         sessionQueue.async { [weak self] in
             NSLog("AVEngine orientationChanged try videoDevice?.lockForConfiguration()")
+            do {
+            try self?.videoDevice?.lockForConfiguration()
             self?.videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
+            } catch {
+                NSLog("\(error.localizedDescription)")
+            }
+            self?.videoDevice?.unlockForConfiguration()
+            NSLog("AVEngine videoDevice?.unlockForConfiguration()")
         }
     }
     
