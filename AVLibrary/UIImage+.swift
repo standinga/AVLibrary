@@ -21,7 +21,7 @@ extension UIImage {
         let height = cgImage.height
         
         var pixelBuffer: CVPixelBuffer?
-        var status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, options, &pixelBuffer)
+        let status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange, options, &pixelBuffer)
         guard status == 0 else {
             fatalError("can't create CVPixelBuffer status > 0")
         }

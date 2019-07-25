@@ -19,6 +19,8 @@ extension AVCaptureVideoOrientation: CustomStringConvertible {
             desc = "landscapeRight"
         case .landscapeLeft:
             desc = "landscapeLeft"
+        @unknown default:
+            fatalError()
         }
         return desc
     }

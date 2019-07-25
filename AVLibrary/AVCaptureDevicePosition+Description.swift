@@ -19,6 +19,8 @@ extension AVCaptureDevice.Position: CustomStringConvertible {
             desc = "back"
         case .front:
             desc = "front"
+        @unknown default:
+            fatalError()
         }
         
         return desc
