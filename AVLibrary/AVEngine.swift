@@ -80,9 +80,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         }
         do {
             try device.lockForConfiguration()
-            device.setFocusModeLocked(lensPosition: lensPosition) { time in
-                print("AVEngine did set focus", lensPosition)
-            }
+            device.setFocusModeLocked(lensPosition: lensPosition) { _ in }
             device.focusMode = .locked
             device.unlockForConfiguration()
         } catch let error {
@@ -104,7 +102,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     deinit {
         videoDevice?.removeObserver(self, forKeyPath: "focusMode")
         videoDevice?.removeObserver(self, forKeyPath: "lensPosition")
-        NSLog("AVEngine deinited!!!")
     }
     
     fileprivate func initVideoInput(videoDevice: AVCaptureDevice, session: AVCaptureSession) {
@@ -113,7 +110,6 @@ class AVEngine: NSObject, AVEngineProtocol {
             guard let videoIn = videoIn else { return }
             if  session.canAddInput(videoIn)  {
                 session.addInput(videoIn)
-                NSLog("addedInput")
             }
         } catch {
             NSLog("initvideoinput error")
@@ -131,7 +127,6 @@ class AVEngine: NSObject, AVEngineProtocol {
             session.addOutput(videoOut!)
             videoConnection = videoOut!.connection(with: .video)
             videoConnection?.videoOrientation = videoOrientation
-            NSLog("videoConnection?.isVideoMirroringSupported \(String(describing: videoConnection?.isVideoMirroringSupported))")
         }
     }
     
@@ -186,7 +181,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     public func setupAVCapture (_ cameraPosition: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
         currentCameraPosition = cameraPosition
-        NSLog("AVEngine setupAVCapture")
         requestCameraAccess()
         
         avSession = AVCaptureSession()
@@ -238,7 +232,6 @@ class AVEngine: NSObject, AVEngineProtocol {
             let avData = AVEngineData(format: format, session: self.avSession, cameraPosition: self.currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation)
             
             DispatchQueue.main.async {
-                print(avData.description)
                 self.delegate?.didStartRunning(format: format, session: session, avData: avData)
             }
         }
@@ -255,7 +248,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     private func changeCameraFormatSync(_ format: AVCaptureDevice.Format, fps: Int) {
-        NSLog("changeCameraFormatSync in queue")
         do {
             try
                 videoDevice?.lockForConfiguration()
@@ -301,7 +293,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     public func orientationChanged(rawValue: Int) {
         sessionQueue.async { [weak self] in
-            NSLog("AVEngine orientationChanged try videoDevice?.lockForConfiguration()")
             do {
             try self?.videoDevice?.lockForConfiguration()
             self?.videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
@@ -309,7 +300,6 @@ class AVEngine: NSObject, AVEngineProtocol {
                 NSLog("\(error.localizedDescription)")
             }
             self?.videoDevice?.unlockForConfiguration()
-            NSLog("AVEngine videoDevice?.unlockForConfiguration()")
         }
     }
     
@@ -364,7 +354,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func destroy() {
-        NSLog("AVEngine destroy")
         sessionQueue.async { [weak self] in
             self?.avSession?.stopRunning()
             self?.avSession = nil
@@ -396,7 +385,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     private func addVideoDeviceObserver() {
-        NSLog("addVideoDeviceObserver")
         videoDevice?.addObserver(self, forKeyPath: "focusMode", options: .new, context: nil)
         videoDevice?.addObserver(self, forKeyPath: "lensPosition", options: .new, context: nil)
     }
