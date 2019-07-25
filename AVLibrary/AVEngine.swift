@@ -131,7 +131,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             session.addOutput(videoOut!)
             videoConnection = videoOut!.connection(with: .video)
             videoConnection?.videoOrientation = videoOrientation
-            NSLog("videoConnection?.isVideoMirroringSupported \(videoConnection?.isVideoMirroringSupported)")
+            NSLog("videoConnection?.isVideoMirroringSupported \(String(describing: videoConnection?.isVideoMirroringSupported))")
         }
     }
     
