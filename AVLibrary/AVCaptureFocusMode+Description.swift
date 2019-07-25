@@ -17,6 +17,7 @@ extension AVCaptureDevice.FocusMode: CustomStringConvertible {
             desc = "autoFocus"
         case .continuousAutoFocus:
             desc = "continuousAutoFocus"
+        default: desc = "unknown"
         }
         return desc
     }
