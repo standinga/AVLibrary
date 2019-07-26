@@ -46,7 +46,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     private var rearCameraInput: AVCaptureDeviceInput?
     
     var availableCameraFormats: [CameraFormat] {
-        return AVUtils1.availableCameraForamats(videoDevice, currentFormat: videoFormat, maxFrameSize: 5000 * 5000 )
+        return AVUtils1.availableCameraForamats(videoDevice, currentFormat: videoFormat, maxFrameSize: 1920 * 1080 )
     }
     
     var isRunning = false
