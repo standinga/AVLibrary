@@ -180,20 +180,4 @@
     CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
 }
 
-+(void)copyVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer bufferCopy:(CMSampleBufferRef *)bufferCopy {
-    CVImageBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    CVImageBufferRef pixelBufferCopy = NULL;
-    [AVUtils copyVideoFrame:pixelBuffer bufferCopy: &pixelBufferCopy];
-    
-    CMSampleTimingInfo sampleTiming;
-    CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &sampleTiming);
-    sampleTiming.duration = kCMTimeInvalid;
-    sampleTiming.decodeTimeStamp = kCMTimeInvalid;
-    
-    OSStatus status = CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBufferCopy, CMSampleBufferGetFormatDescription(sampleBuffer), &sampleTiming, bufferCopy);
-    NSParameterAssert(status == 0);
-    CVPixelBufferRelease(pixelBuffer); // without it camera stops sending new frames
-    pixelBuffer = NULL;
-}
-
 @end
