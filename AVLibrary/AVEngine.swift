@@ -58,7 +58,12 @@ class AVEngine: NSObject, AVEngineProtocol {
     // MARK: delegate:f
     weak var delegate: AVEngineDelegate?
     
-    var pauseCapturing = false
+    var pauseCapturing = false {
+        didSet {
+            videoConnection?.isEnabled = !pauseCapturing
+            audioConnection?.isEnabled = !pauseCapturing
+        }
+    }
     var supportsLockedFocus: Bool {
         return videoDevice?.isFocusModeSupported(.locked) ?? false
     }
@@ -425,14 +430,19 @@ extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudio
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         lockQueue.async { [weak self] in
-        if self?.pauseCapturing ?? false { return }
+            self?.captureOutputSync(output, didOutput: sampleBuffer, from: connection)
+        }
+    }
+    
+    private func captureOutputSync(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if pauseCapturing { return }
         let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard let port = connection.inputPorts.first else { return }
-            self?.delegate?.onSampleBuffer(sampleBuffer,
-                                           connection: connection,
-                                           timestamp: timestamp,
-                                           output: output,
-                                           isVideo: port.mediaType == .video)
-        }
+        delegate?.onSampleBuffer(sampleBuffer,
+                                 connection: connection,
+                                 timestamp: timestamp,
+                                 output: output,
+                                 isVideo: port.mediaType == .video)
+        
     }
 }
