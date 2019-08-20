@@ -17,6 +17,29 @@ public struct AVEngineData {
     public var videoOrientation: AVCaptureVideoOrientation
 }
 
+extension AVEngineData {
+    init?(format: AVCaptureDevice.Format?, session: AVCaptureSession?,
+          cameraPosition: AVCaptureDevice.Position?, fps: Int?,
+          focus: AVCaptureDevice.FocusMode?, lensPosition: Float?, videoOrientation: AVCaptureVideoOrientation?) {
+        guard let format = format,
+            let session = session,
+            let cameraPosition = cameraPosition,
+            let fps = fps,
+            let focus = focus,
+            let lensPosition = lensPosition,
+            let orientation = videoOrientation else {
+                return nil
+        }
+        self.format = format
+        self.session = session
+        self.cameraPosition = cameraPosition
+        self.fps = fps
+        self.focus = focus
+        self.lensPosition = lensPosition
+        self.videoOrientation = orientation
+    }
+}
+
 extension AVEngineData: CustomStringConvertible {
     public var description: String {
         let desc =

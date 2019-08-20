@@ -21,6 +21,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var isRunning = true
     var currentCameraPosition = AVCaptureDevice.Position.back
     var format: MockupAVFormat
+    var avData: AVEngineData? = nil
     
     private var timer: Timer?
     private var sampleBuffer: CMSampleBuffer!

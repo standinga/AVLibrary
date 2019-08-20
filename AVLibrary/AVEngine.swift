@@ -12,9 +12,41 @@ import UIKit
 
 class AVEngine: NSObject, AVEngineProtocol {
     
+    weak var delegate: AVEngineDelegate?
+    
     var avSession: AVCaptureSession!
     var currentCameraPosition = AVCaptureDevice.Position.back
     var videoDevice: AVCaptureDevice?
+    
+    var isRunning = false
+    
+    var availableCameraFormats: [CameraFormat] {
+        return AVUtils1.availableCameraForamats(videoDevice, currentFormat: videoFormat, maxFrameSize: 1920 * 1080 )
+    }
+    
+    var fps: Int {
+        return Int(videoDevice?.activeVideoMinFrameDuration.timescale ?? 0)
+    }
+    
+    
+    var pauseCapturing = false {
+        didSet {
+            videoConnection?.isEnabled = !pauseCapturing
+            audioConnection?.isEnabled = !pauseCapturing
+        }
+    }
+    var supportsLockedFocus: Bool {
+        return videoDevice?.isFocusModeSupported(.locked) ?? false
+    }
+    
+    var isFocusLocked: Bool {
+        return videoDevice?.focusMode == .locked
+    }
+    
+    var avData: AVEngineData? {
+        return AVEngineData(format: videoFormat, session: avSession, cameraPosition: currentCameraPosition, fps: fps, focus: videoDevice?.focusMode , lensPosition: videoDevice?.lensPosition, videoOrientation: videoOrientation)
+    }
+    
     
     // MARK: session management:
     private var sesionPreset = AVCaptureSession.Preset.vga640x480
@@ -27,9 +59,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     private var videoIn: AVCaptureDeviceInput?
     private var videoOut: AVCaptureVideoDataOutput?
-    private var videoFormat: AVCaptureDevice.Format? {
-        return videoDevice?.activeFormat
-    }
     private var videoConnection: AVCaptureConnection?
     private var audioConnection: AVCaptureConnection?
     
@@ -45,31 +74,10 @@ class AVEngine: NSObject, AVEngineProtocol {
     private var frontCameraInput: AVCaptureDeviceInput?
     private var rearCameraInput: AVCaptureDeviceInput?
     
-    var availableCameraFormats: [CameraFormat] {
-        return AVUtils1.availableCameraForamats(videoDevice, currentFormat: videoFormat, maxFrameSize: 1920 * 1080 )
-    }
+    private var videoOrientation: AVCaptureVideoOrientation?
     
-    var isRunning = false
-    
-    var fps: Int {
-        return Int(videoDevice?.activeVideoMinFrameDuration.timescale ?? 0)
-    }
-    
-    // MARK: delegate:f
-    weak var delegate: AVEngineDelegate?
-    
-    var pauseCapturing = false {
-        didSet {
-            videoConnection?.isEnabled = !pauseCapturing
-            audioConnection?.isEnabled = !pauseCapturing
-        }
-    }
-    var supportsLockedFocus: Bool {
-        return videoDevice?.isFocusModeSupported(.locked) ?? false
-    }
-    
-    var isFocusLocked: Bool {
-        return videoDevice?.focusMode == .locked
+    private var videoFormat: AVCaptureDevice.Format? {
+        return videoDevice?.activeFormat
     }
     
     init (withLockingQueue: DispatchQueue) {
@@ -132,6 +140,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             session.addOutput(videoOut!)
             videoConnection = videoOut!.connection(with: .video)
             videoConnection?.videoOrientation = videoOrientation
+            self.videoOrientation = videoOrientation
         }
     }
     
@@ -234,8 +243,10 @@ class AVEngine: NSObject, AVEngineProtocol {
                 return
             }
             
-            let avData = AVEngineData(format: format, session: self.avSession, cameraPosition: self.currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation)
-            
+            guard let avData = AVEngineData(format: format, session: self.avSession, cameraPosition: self.currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation) else {
+                fatalError("avData nil in setup")
+            }
+            self.videoOrientation = videoOrientation
             DispatchQueue.main.async {
                 self.delegate?.didStartRunning(format: format, session: session, avData: avData)
             }
@@ -299,8 +310,9 @@ class AVEngine: NSObject, AVEngineProtocol {
     public func orientationChanged(rawValue: Int) {
         sessionQueue.async { [weak self] in
             do {
-            try self?.videoDevice?.lockForConfiguration()
-            self?.videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
+                try self?.videoDevice?.lockForConfiguration()
+                self?.videoConnection?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)!
+                self?.videoOrientation = AVCaptureVideoOrientation(rawValue: rawValue)
             } catch {
                 NSLog("\(error.localizedDescription)")
             }
@@ -353,6 +365,8 @@ class AVEngine: NSObject, AVEngineProtocol {
             NSLog(error.localizedDescription)
         }
         avSession.commitConfiguration()
+        self.videoOrientation = videoConnection?.videoOrientation
+        //        let avData = AVEngineData(format: format, session: avSession, cameraPosition: currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation)
         delegate?.didSwitchCamera(to: currentCameraPosition)
         addVideoDeviceObserver()
         pauseCapturing = false
