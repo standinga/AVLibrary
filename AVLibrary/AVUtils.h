@@ -14,5 +14,4 @@
 +(CMSampleBufferRef) copyAudioSampleBufferRef:(CMSampleBufferRef) sampleBuffer blockBufferRef:(CMBlockBufferRef *) blockBufferRef;
 +(CMSampleBufferRef)updateTimestamp:(CMSampleBufferRef)sampleBuffer updatedBuffer:(CMSampleBufferRef *)updateBuffer timestamp:(CMTime)timestamp;
 +(void)copyVideoFrame:(CVImageBufferRef)pixelBuffer bufferCopy:(CVImageBufferRef *)bufferCopy;
-+(void)copyVideoSampleBuffer:(CMSampleBufferRef)sampleBuffer bufferCopy:(CMSampleBufferRef *)bufferCopy;
 @end
