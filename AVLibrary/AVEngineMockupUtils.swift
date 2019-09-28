@@ -18,7 +18,6 @@ struct AVEngineMockupUtils {
         var desc: CMVideoFormatDescription?
         
         CMFormatDescriptionCreate(allocator: kCFAllocatorDefault, mediaType: kCMMediaType_Video, mediaSubType: FourCharCode(fourChar("avc1")), extensions: nil, formatDescriptionOut: &desc)
-        
     }
     
     static func fourChar (_ s: String) -> Int {
