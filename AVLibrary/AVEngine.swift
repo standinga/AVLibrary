@@ -174,24 +174,50 @@ class AVEngine: NSObject, AVEngineProtocol {
         }
     }
     
-    func toggleFocus() {
+    func lockFocus() {
         guard let device = self.videoDevice else {
             return
         }
         do {
             try
-                device.lockForConfiguration()
+            device.lockForConfiguration()
             if device.isFocusModeSupported(.locked) {
-                let fMode = device.focusMode
-                device.focusMode = fMode == AVCaptureDevice.FocusMode.locked ? .continuousAutoFocus : .locked
+                device.focusMode = .locked
             }
             device.unlockForConfiguration()
             delegate?.didSetFocus(device.focusMode, lensPosition: device.lensPosition)
-        } catch let error {
+        } catch {
             NSLog(error.localizedDescription)
         }
     }
     
+    func unlockFocus() {
+        guard let device = self.videoDevice else {
+            return
+        }
+        do {
+            try
+            device.lockForConfiguration()
+            if device.isFocusModeSupported(.continuousAutoFocus) {
+                device.focusMode = .continuousAutoFocus
+            }
+            device.unlockForConfiguration()
+            delegate?.didSetFocus(device.focusMode, lensPosition: device.lensPosition)
+        } catch {
+            NSLog(error.localizedDescription)
+        }
+    }
+    
+    func toggleFocus() {
+        guard let device = self.videoDevice else {
+            return
+        }
+        if device.focusMode == .locked {
+            unlockFocus()
+        } else {
+            lockFocus()
+        }
+    }
     
     public func setupAVCapture (_ cameraPosition: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
         currentCameraPosition = cameraPosition

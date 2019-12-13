@@ -28,6 +28,8 @@ public protocol AVEngineProtocol : class {
     func updateLensPositionAndLockFocus(_ lensPosition: Float)
     func debug()
     func destroy()
+    func lockFocus()
+    func unlockFocus()
 }
 
 public protocol AVEngineDelegate: class {

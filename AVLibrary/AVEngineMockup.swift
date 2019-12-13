@@ -69,6 +69,14 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
         
     }
     
+    func lockFocus() {
+        
+    }
+    
+    func unlockFocus() {
+        
+    }
+    
     @objc func onTime() {
         
         let now = CFAbsoluteTimeGetCurrent()
