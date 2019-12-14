@@ -8,7 +8,11 @@
 
 import Foundation
 import AVFoundation
+#if os(iOS)
 import UIKit
+#elseif os(macOS)
+import AppKit
+#endif
 
 open class AVUtils1 {
     
@@ -30,48 +34,6 @@ open class AVUtils1 {
         var out: CMSampleBuffer?
         CMSampleBufferCreateCopyWithNewTiming(allocator: nil, sampleBuffer: sample, sampleTimingEntryCount: count, sampleTimingArray: &info, sampleBufferOut: &out)
         return out!
-    }
-    
-    static func cameraOrientationFromDeviceOrientation (_ deviceOrientation: UIDeviceOrientation) -> AVCaptureVideoOrientation {
-        var newOrientation:AVCaptureVideoOrientation!
-        switch (deviceOrientation) {
-        case .portrait:
-            newOrientation = AVCaptureVideoOrientation.portrait
-            break
-        case .portraitUpsideDown:
-            newOrientation = AVCaptureVideoOrientation.portraitUpsideDown
-            break
-        case .landscapeLeft:
-            newOrientation = AVCaptureVideoOrientation.landscapeRight
-            break
-        case .landscapeRight:
-            newOrientation = AVCaptureVideoOrientation.landscapeLeft
-            break
-        default:
-            newOrientation = AVCaptureVideoOrientation.landscapeLeft
-            break
-        }
-        return newOrientation
-    }
-    static func videoOrientationFromDeviceOrientation (_ deviceOrientation: UIDeviceOrientation ) -> AVCaptureVideoOrientation {
-        var newOrientation: AVCaptureVideoOrientation!
-        switch (deviceOrientation) {
-        case .portrait:
-            newOrientation = AVCaptureVideoOrientation.portrait
-            break
-        case .portraitUpsideDown:
-            newOrientation = AVCaptureVideoOrientation.portraitUpsideDown
-            break
-        case .landscapeLeft:
-            newOrientation = AVCaptureVideoOrientation.landscapeLeft
-            break
-        case .landscapeRight:
-            newOrientation = AVCaptureVideoOrientation.landscapeRight
-            break
-        default:
-            newOrientation = AVCaptureVideoOrientation.portrait
-        }
-        return newOrientation
     }
     
     static func getVideoTransform(orientation: AVCaptureVideoOrientation, cameraPosition: Int) -> CGAffineTransform {
@@ -180,8 +142,58 @@ open class AVUtils1 {
         let height = dimensions.height
         let maxFPS = strongFormat.videoSupportedFrameRateRanges[0].maxFrameRate
         let minFPS = strongFormat.videoSupportedFrameRateRanges[0].minFrameRate
+        #if os(iOS)
         let minIso = strongFormat.minISO
         let maxIso = strongFormat.maxISO
         return "width:\(width)height:\(height)minfps:\(minFPS)maxfps:\(maxFPS)miniso:\(minIso)maxiso:\(maxIso)"
+        #elseif os(macOS)
+        return "width:\(width)height:\(height)minfps:\(minFPS)maxfps:\(maxFPS)"
+        #endif
     }
+    
+    #if os(iOS)
+    
+    static func cameraOrientationFromDeviceOrientation (_ deviceOrientation: UIDeviceOrientation) -> AVCaptureVideoOrientation {
+        var newOrientation:AVCaptureVideoOrientation!
+        switch (deviceOrientation) {
+        case .portrait:
+            newOrientation = AVCaptureVideoOrientation.portrait
+            break
+        case .portraitUpsideDown:
+            newOrientation = AVCaptureVideoOrientation.portraitUpsideDown
+            break
+        case .landscapeLeft:
+            newOrientation = AVCaptureVideoOrientation.landscapeRight
+            break
+        case .landscapeRight:
+            newOrientation = AVCaptureVideoOrientation.landscapeLeft
+            break
+        default:
+            newOrientation = AVCaptureVideoOrientation.landscapeLeft
+            break
+        }
+        return newOrientation
+    }
+    
+    static func videoOrientationFromDeviceOrientation (_ deviceOrientation: UIDeviceOrientation ) -> AVCaptureVideoOrientation {
+        var newOrientation: AVCaptureVideoOrientation!
+        switch (deviceOrientation) {
+        case .portrait:
+            newOrientation = AVCaptureVideoOrientation.portrait
+            break
+        case .portraitUpsideDown:
+            newOrientation = AVCaptureVideoOrientation.portraitUpsideDown
+            break
+        case .landscapeLeft:
+            newOrientation = AVCaptureVideoOrientation.landscapeLeft
+            break
+        case .landscapeRight:
+            newOrientation = AVCaptureVideoOrientation.landscapeRight
+            break
+        default:
+            newOrientation = AVCaptureVideoOrientation.portrait
+        }
+        return newOrientation
+    }
+    #endif
 }

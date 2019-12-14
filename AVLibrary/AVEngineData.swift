@@ -45,11 +45,8 @@ extension AVEngineData: CustomStringConvertible {
         let desc =
         """
         format: \(format.description),
-        position: \(cameraPosition.description),
         fps: \(fps),
-        focus: \(focus.description),
         lensPosition: \(lensPosition),
-        videoOrientation: \(videoOrientation.description)
         """
         return desc
     }

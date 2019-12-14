@@ -6,7 +6,11 @@
 //  Copyright © 2019 michal. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#if TARGET_OS_IPHONE
+    @import UIKit;
+#else
+    @import AppKit;
+#endif
 #import <AVLibrary/AVUtils.h>
 
 //! Project version number for AVLibrary.

@@ -33,7 +33,11 @@ public protocol AVEngineProtocol : class {
 }
 
 public protocol AVEngineDelegate: class {
+    #if os(iOS)
     func didStartRunning(format: AVCaptureDevice.Format, session: AVCaptureSession, avData: AVEngineData)
+    #elseif os(macOS)
+    func didStartRunning(format: AVCaptureDevice.Format, session: AVCaptureSession)
+    #endif
     func didSwitchCamera(to cameraPosition: AVCaptureDevice.Position)
     func didChangeVideoFormat(to format: AVCaptureDevice.Format)
     func startedChangingVideoFormat()

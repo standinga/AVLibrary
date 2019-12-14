@@ -8,7 +8,7 @@
 
 import Foundation
 import AVFoundation
-import UIKit
+import CoreMedia
 
 class AVEngine: NSObject, AVEngineProtocol {
     
@@ -44,7 +44,11 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     var avData: AVEngineData? {
+        #if os(iOS)
         return AVEngineData(format: videoFormat, session: avSession, cameraPosition: currentCameraPosition, fps: fps, focus: videoDevice?.focusMode , lensPosition: videoDevice?.lensPosition, videoOrientation: videoOrientation)
+        #elseif os(macOS)
+        return AVEngineData(format: videoFormat, session: avSession, cameraPosition: currentCameraPosition, fps: fps, focus: videoDevice?.focusMode , lensPosition: nil, videoOrientation: videoOrientation)
+        #endif
     }
     
     
@@ -88,6 +92,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     func debug() { }
     
     func updateLensPositionAndLockFocus(_ lensPosition: Float) {
+        #if os(iOS)
         guard let device = videoDevice, device.isFocusModeSupported(.locked) else {
             return
         }
@@ -99,8 +104,9 @@ class AVEngine: NSObject, AVEngineProtocol {
         } catch let error {
             NSLog(error.localizedDescription)
         }
+        #endif
     }
-    
+    #if os(iOS)
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard let device = videoDevice else { return }
         if keyPath == "focusMode" {
@@ -111,6 +117,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             }
         }
     }
+    #endif
     
     deinit {
         videoDevice?.removeObserver(self, forKeyPath: "focusMode")
@@ -170,11 +177,16 @@ class AVEngine: NSObject, AVEngineProtocol {
         if session.canAddOutput(audioOut) {
             session.addOutput(audioOut)
             audioConnection = audioOut.connection(with: .audio)
+            #if os(iOS)
             audioCompressionSettings = audioOut.recommendedAudioSettingsForAssetWriter(writingTo: AVFileType.mov)
+            #elseif os(macOS)
+            audioCompressionSettings = [:]
+            #endif
         }
     }
     
     func lockFocus() {
+        #if os(iOS)
         guard let device = self.videoDevice else {
             return
         }
@@ -189,9 +201,11 @@ class AVEngine: NSObject, AVEngineProtocol {
         } catch {
             NSLog(error.localizedDescription)
         }
+        #endif
     }
     
     func unlockFocus() {
+        #if os(iOS)
         guard let device = self.videoDevice else {
             return
         }
@@ -206,6 +220,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         } catch {
             NSLog(error.localizedDescription)
         }
+        #endif
     }
     
     func toggleFocus() {
@@ -244,6 +259,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             self.avSession.commitConfiguration()
             self.avSession.startRunning()
             
+            #if os(iOS)
             if let device = self.videoDevice {
                 do {
                     try
@@ -262,19 +278,24 @@ class AVEngine: NSObject, AVEngineProtocol {
                     NSLog(error.localizedDescription)
                 }
             }
-            
+            #endif
             self.isRunning = true
             
             guard let format = self.videoFormat, let session = self.avSession else {
                 return
             }
-            
+            #if os(iOS)
             guard let avData = AVEngineData(format: format, session: self.avSession, cameraPosition: self.currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation) else {
                 fatalError("avData nil in setup")
             }
+            #endif
             self.videoOrientation = videoOrientation
             DispatchQueue.main.async {
+                #if os(iOS)
                 self.delegate?.didStartRunning(format: format, session: session, avData: avData)
+                #elseif os(macOS)
+                self.delegate?.didStartRunning(format: format, session: session)
+                #endif
             }
         }
     }
@@ -407,6 +428,8 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     public func initCameras() {
         if #available(iOS 10.0, *) {
+
+            #if os(iOS)
             let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
             session.devices.forEach {
                 if $0.position == .front {
@@ -416,6 +439,7 @@ class AVEngine: NSObject, AVEngineProtocol {
                     rearCamera = $0
                 }
             }
+            #endif
         } else {
             let devices = AVCaptureDevice.devices(for: .video)
             devices.forEach {
@@ -437,6 +461,10 @@ class AVEngine: NSObject, AVEngineProtocol {
     @available(iOS, deprecated: 12.0)
     fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
         let devices = AVCaptureDevice.devices(for: .video)
+        #warning("quick osx fix")
+        #if os(macOS)
+        return devices[0]
+        #endif
         for device in devices {
             if device.position == cameraPosition {
                 return device
