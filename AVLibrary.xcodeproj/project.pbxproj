@@ -32,6 +32,20 @@
 		9056628522DD2F4F00033428 /* UIInterfaceOrientation+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056628022DD2F4F00033428 /* UIInterfaceOrientation+.swift */; };
 		9056628722DD2F8F00033428 /* MockupAVFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056628622DD2F8F00033428 /* MockupAVFormat.swift */; };
 		9056628922DD2FAB00033428 /* AVEngineData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056628822DD2FAB00033428 /* AVEngineData.swift */; };
+		908B814023A45B46000F57E1 /* MockupAVFormatOSX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908B813F23A45B3D000F57E1 /* MockupAVFormatOSX.swift */; };
+		908B814223A45B90000F57E1 /* AVEngineMockupExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 908B814123A45B84000F57E1 /* AVEngineMockupExtension.swift */; };
+		90D179B723A328F500CE5D9D /* AVUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9030CCAD2259595900510F1C /* AVUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		90D179B823A328F500CE5D9D /* AVLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 9030CC86225958C600510F1C /* AVLibrary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		90D179B923A3292500CE5D9D /* AVEngineProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA02259590300510F1C /* AVEngineProtocol.swift */; };
+		90D179BA23A32A2F00CE5D9D /* AVUtils1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA92259595900510F1C /* AVUtils1.swift */; };
+		90D179BB23A32A3300CE5D9D /* AVUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAC2259595900510F1C /* AVUtils.m */; };
+		90D179BC23A32A9400CE5D9D /* CameraFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCAA2259595900510F1C /* CameraFormat.swift */; };
+		90D179BD23A32A9F00CE5D9D /* AVEngineData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9056628822DD2FAB00033428 /* AVEngineData.swift */; };
+		90D179C123A32C3900CE5D9D /* AVEngineFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CC9F2259590300510F1C /* AVEngineFactory.swift */; };
+		90D179C223A32C5C00CE5D9D /* AVEngineMockup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA22259590300510F1C /* AVEngineMockup.swift */; };
+		90D179C323A32C6300CE5D9D /* AVEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CCA12259590300510F1C /* AVEngine.swift */; };
+		90D179C423A32CD100CE5D9D /* AVEngineMockupUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */; };
+		90D179C623A32CE400CE5D9D /* MockupAVFrameRateRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 902833B722E5F59100DF513E /* MockupAVFrameRateRange.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +57,19 @@
 			remoteInfo = AVLibrary;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		90D1799E23A3268600CE5D9D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		900C538222E2078C00B86A9B /* sky.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sky.png; sourceTree = "<group>"; };
@@ -73,6 +100,10 @@
 		9056628022DD2F4F00033428 /* UIInterfaceOrientation+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIInterfaceOrientation+.swift"; sourceTree = "<group>"; };
 		9056628622DD2F8F00033428 /* MockupAVFormat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MockupAVFormat.swift; path = AVLibrary/MockupAVFormat.swift; sourceTree = SOURCE_ROOT; };
 		9056628822DD2FAB00033428 /* AVEngineData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEngineData.swift; sourceTree = "<group>"; };
+		908B813F23A45B3D000F57E1 /* MockupAVFormatOSX.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockupAVFormatOSX.swift; sourceTree = "<group>"; };
+		908B814123A45B84000F57E1 /* AVEngineMockupExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVEngineMockupExtension.swift; sourceTree = "<group>"; };
+		90D179A423A3278A00CE5D9D /* AVLibrary.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = AVLibrary.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		90D179A723A3278A00CE5D9D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +122,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		90D179A123A3278A00CE5D9D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -99,7 +137,9 @@
 			children = (
 				9030CC85225958C600510F1C /* AVLibrary */,
 				9030CC90225958C600510F1C /* AVLibraryTests */,
+				90D179A523A3278A00CE5D9D /* AVLibraryOSX */,
 				9030CC84225958C600510F1C /* Products */,
+				90D1799923A3268600CE5D9D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -108,6 +148,7 @@
 			children = (
 				9030CC83225958C600510F1C /* AVLibrary.framework */,
 				9030CC8C225958C600510F1C /* AVLibraryTests.xctest */,
+				90D179A423A3278A00CE5D9D /* AVLibrary.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -120,9 +161,11 @@
 				9011A7AD22E2ACD60053785E /* tree1280_720.jpg */,
 				9030CCA12259590300510F1C /* AVEngine.swift */,
 				9056628622DD2F8F00033428 /* MockupAVFormat.swift */,
+				908B813F23A45B3D000F57E1 /* MockupAVFormatOSX.swift */,
 				9056628822DD2FAB00033428 /* AVEngineData.swift */,
 				9030CC9F2259590300510F1C /* AVEngineFactory.swift */,
 				9030CCA22259590300510F1C /* AVEngineMockup.swift */,
+				908B814123A45B84000F57E1 /* AVEngineMockupExtension.swift */,
 				900C538622E20D2E00B86A9B /* MockupAVCaptureOutput.swift */,
 				9030CC9D2259590200510F1C /* AVEngineMockupUtils.swift */,
 				9030CCA02259590300510F1C /* AVEngineProtocol.swift */,
@@ -152,6 +195,21 @@
 			path = AVLibraryTests;
 			sourceTree = "<group>";
 		};
+		90D1799923A3268600CE5D9D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		90D179A523A3278A00CE5D9D /* AVLibraryOSX */ = {
+			isa = PBXGroup;
+			children = (
+				90D179A723A3278A00CE5D9D /* Info.plist */,
+			);
+			path = AVLibraryOSX;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -161,6 +219,15 @@
 			files = (
 				9030CC94225958C600510F1C /* AVLibrary.h in Headers */,
 				902833BF22E5FB6800DF513E /* AVUtils.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90D1799F23A3278A00CE5D9D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90D179B823A328F500CE5D9D /* AVLibrary.h in Headers */,
+				90D179B723A328F500CE5D9D /* AVUtils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,6 +242,7 @@
 				9030CC7F225958C600510F1C /* Sources */,
 				9030CC80225958C600510F1C /* Frameworks */,
 				9030CC81225958C600510F1C /* Resources */,
+				90D1799E23A3268600CE5D9D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -203,6 +271,24 @@
 			productReference = 9030CC8C225958C600510F1C /* AVLibraryTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		90D179A323A3278A00CE5D9D /* AVLibraryOSX */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 90D179A923A3278A00CE5D9D /* Build configuration list for PBXNativeTarget "AVLibraryOSX" */;
+			buildPhases = (
+				90D1799F23A3278A00CE5D9D /* Headers */,
+				90D179A023A3278A00CE5D9D /* Sources */,
+				90D179A123A3278A00CE5D9D /* Frameworks */,
+				90D179A223A3278A00CE5D9D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AVLibraryOSX;
+			productName = AVLibraryOSX;
+			productReference = 90D179A423A3278A00CE5D9D /* AVLibrary.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -219,6 +305,9 @@
 					};
 					9030CC8B225958C600510F1C = {
 						CreatedOnToolsVersion = 10.2;
+					};
+					90D179A323A3278A00CE5D9D = {
+						CreatedOnToolsVersion = 11.3;
 					};
 				};
 			};
@@ -237,6 +326,7 @@
 			targets = (
 				9030CC82225958C600510F1C /* AVLibrary */,
 				9030CC8B225958C600510F1C /* AVLibraryTests */,
+				90D179A323A3278A00CE5D9D /* AVLibraryOSX */,
 			);
 		};
 /* End PBXProject section */
@@ -253,6 +343,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9030CC8A225958C600510F1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90D179A223A3278A00CE5D9D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -281,6 +378,7 @@
 				900C538722E20D2E00B86A9B /* MockupAVCaptureOutput.swift in Sources */,
 				9030CCA62259590300510F1C /* AVEngineProtocol.swift in Sources */,
 				9056628422DD2F4F00033428 /* UIImage+.swift in Sources */,
+				908B814223A45B90000F57E1 /* AVEngineMockupExtension.swift in Sources */,
 				9030CCAF2259595900510F1C /* MetaData.swift in Sources */,
 				9056628522DD2F4F00033428 /* UIInterfaceOrientation+.swift in Sources */,
 				9056628322DD2F4F00033428 /* AVCaptureVideoOrientation+Description.swift in Sources */,
@@ -292,6 +390,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				9030CC92225958C600510F1C /* AVLibraryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		90D179A023A3278A00CE5D9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90D179BB23A32A3300CE5D9D /* AVUtils.m in Sources */,
+				90D179C123A32C3900CE5D9D /* AVEngineFactory.swift in Sources */,
+				90D179BA23A32A2F00CE5D9D /* AVUtils1.swift in Sources */,
+				90D179B923A3292500CE5D9D /* AVEngineProtocol.swift in Sources */,
+				90D179BD23A32A9F00CE5D9D /* AVEngineData.swift in Sources */,
+				90D179BC23A32A9400CE5D9D /* CameraFormat.swift in Sources */,
+				90D179C423A32CD100CE5D9D /* AVEngineMockupUtils.swift in Sources */,
+				90D179C323A32C6300CE5D9D /* AVEngine.swift in Sources */,
+				90D179C223A32C5C00CE5D9D /* AVEngineMockup.swift in Sources */,
+				90D179C623A32CE400CE5D9D /* MockupAVFrameRateRange.swift in Sources */,
+				908B814023A45B46000F57E1 /* MockupAVFormatOSX.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -519,6 +635,56 @@
 			};
 			name = Release;
 		};
+		90D179AA23A3278A00CE5D9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = AVLibraryOSX/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = co.borama.AVLibraryOSX;
+				PRODUCT_NAME = AVLibrary;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		90D179AB23A3278A00CE5D9D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = AVLibraryOSX/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = co.borama.AVLibraryOSX;
+				PRODUCT_NAME = AVLibrary;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -545,6 +711,15 @@
 			buildConfigurations = (
 				9030CC9B225958C600510F1C /* Debug */,
 				9030CC9C225958C600510F1C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		90D179A923A3278A00CE5D9D /* Build configuration list for PBXNativeTarget "AVLibraryOSX" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90D179AA23A3278A00CE5D9D /* Debug */,
+				90D179AB23A3278A00CE5D9D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
