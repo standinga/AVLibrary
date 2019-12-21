@@ -6,6 +6,7 @@
 //  Copyright © 2019 michal. All rights reserved.
 //
 
+#include <TargetConditionals.h>
 #if TARGET_OS_IPHONE
     @import UIKit;
 #else

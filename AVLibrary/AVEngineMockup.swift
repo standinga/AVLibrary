@@ -18,7 +18,6 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var availableCameraFormats: [CameraFormat] = AVEngineMockupUtils.formats
     var fps = 30
     weak var delegate: AVEngineDelegate?
-    var lockingQueue: DispatchQueue!
     var imageQueue = DispatchQueue(label: "avenginemockup.image.queue")
     var pauseCapturing = false
     var supportsLockedFocus = true
@@ -34,8 +33,12 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var previousTimestamp = CFAbsoluteTimeGetCurrent()
     var startTime = CFAbsoluteTimeGetCurrent() - 0.02
     
-    init(lockingQueue: DispatchQueue) {
-        self.lockingQueue = lockingQueue
+    let videoQueue: DispatchQueue
+    
+    let audioQueue = DispatchQueue(label: "mockup audio queue")
+    
+    init(videoQueue: DispatchQueue) {
+        self.videoQueue = videoQueue
         
         self.format = MockupAVFormat()
         previousTimestamp = CFAbsoluteTimeGetCurrent()
@@ -57,6 +60,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     
     override init() {
         self.format = MockupAVFormat()
+        self.videoQueue = DispatchQueue(label: "mockup self inited")
         super.init()
     }
     
@@ -84,15 +88,16 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     
     @objc func onTime() {
         #if os(iOS)
-        let now = CFAbsoluteTimeGetCurrent()
-        let delta = now - previousTimestamp
-        startTime += delta
-        previousTimestamp = now
-        let timestamp = CMTime(seconds: startTime, preferredTimescale: 1000000000)
-        let retimedSampleBuffer = retimeSampleBuffer(sampleBuffer, timestamp: timestamp)
-        
-        //        delegate?.onPixelBuffer(pixelBuffer, timestamp: time, formatDescription: fd)
-        delegate?.onSampleBuffer(retimedSampleBuffer, connection: AVCaptureConnection(inputPorts: [], output: MockupAVCaptureOutput()), timestamp: timestamp, output: MockupAVCaptureOutput(), isVideo: true)
+        videoQueue.async {
+            let now = CFAbsoluteTimeGetCurrent()
+            let delta = now - self.previousTimestamp
+            self.startTime += delta
+            self.previousTimestamp = now
+            let timestamp = CMTime(seconds: self.startTime, preferredTimescale: 1000000000)
+            let retimedSampleBuffer = self.retimeSampleBuffer(self.sampleBuffer, timestamp: timestamp)
+            
+            self.delegate?.onSampleBuffer(retimedSampleBuffer, connection: AVCaptureConnection(inputPorts: [], output: MockupAVCaptureOutput()), timestamp: timestamp, output: MockupAVCaptureOutput(), isVideo: true)
+        }
         #endif
     }
     

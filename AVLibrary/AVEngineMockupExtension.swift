@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-private extension AVEngineMockup {
+internal  extension AVEngineMockup {
     func setAttachments(to pixelBuffer: CVPixelBuffer) {
         let dict = createExtensions()
         CVBufferSetAttachments(pixelBuffer, dict, CVAttachmentMode(rawValue: kCMAttachmentMode_ShouldPropagate)!)
@@ -47,7 +47,7 @@ private extension AVEngineMockup {
         return sampleBuffer
     }
     
-    func retimeSampleBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
+    internal func retimeSampleBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
         var count: CMItemCount = 0
         var osStatus = CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count)
         guard osStatus == 0 else {

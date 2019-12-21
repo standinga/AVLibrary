@@ -51,15 +51,12 @@ class AVEngine: NSObject, AVEngineProtocol {
         #endif
     }
     
+    let videoQueue: DispatchQueue
+    let audioQueue: DispatchQueue
     
     // MARK: session management:
     private var sesionPreset = AVCaptureSession.Preset.vga640x480
-    private let sessionQueue = DispatchQueue(
-        label:"co.borama.sessionQueue",
-        qos: .userInitiated)
-    
-    private let videoQueue = DispatchQueue(label: "co.borama.videoQueue", qos: .userInitiated)
-    private let audioQueue = DispatchQueue(label: "co.borama.audioQueue", qos: .userInitiated)
+    private let sessionQueue = DispatchQueue(label:"co.borama.sessionQueue")
     
     private var videoIn: AVCaptureDeviceInput?
     private var videoOut: AVCaptureVideoDataOutput?
@@ -70,13 +67,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     private var audioOut: AVCaptureAudioDataOutput?
     private var audioCompressionSettings: [AnyHashable : Any]?
     
-    private var lockQueue: DispatchQueue!
     private var currentFPS = 0
-    
-    private var frontCamera: AVCaptureDevice?
-    private var rearCamera: AVCaptureDevice?
-    private var frontCameraInput: AVCaptureDeviceInput?
-    private var rearCameraInput: AVCaptureDeviceInput?
     
     private var videoOrientation: AVCaptureVideoOrientation?
     
@@ -84,8 +75,9 @@ class AVEngine: NSObject, AVEngineProtocol {
         return videoDevice?.activeFormat
     }
     
-    init (withLockingQueue: DispatchQueue) {
-        lockQueue = withLockingQueue
+    init (videoQueue: DispatchQueue, audioQueue: DispatchQueue) {
+        self.videoQueue = videoQueue
+        self.audioQueue = audioQueue
         super.init()
     }
     
@@ -246,6 +238,10 @@ class AVEngine: NSObject, AVEngineProtocol {
         let format = AVUtils1.getFormatFromFormatString(cameraFormats, formatString: savedFormatString)
         
         let audioDevice = AVCaptureDevice.default(for: .audio)
+        
+        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        print(#file, #function, "queue:", queueName)
+        
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
             self.avSession.beginConfiguration()
@@ -278,7 +274,19 @@ class AVEngine: NSObject, AVEngineProtocol {
                     NSLog(error.localizedDescription)
                 }
             }
+            #elseif os(macOS)
+            if let device = self.videoDevice, let firstRange = self.videoDevice?.activeFormat.videoSupportedFrameRateRanges.first {
+                do {
+                    try device.lockForConfiguration()
+                    device.activeVideoMinFrameDuration = firstRange.minFrameDuration
+                    device.activeVideoMaxFrameDuration = firstRange.maxFrameDuration
+                    device.unlockForConfiguration()
+                } catch {
+                    NSLog(error.localizedDescription)
+                }
+            }
             #endif
+            
             self.isRunning = true
             
             guard let format = self.videoFormat, let session = self.avSession else {
@@ -290,6 +298,8 @@ class AVEngine: NSObject, AVEngineProtocol {
             }
             #endif
             self.videoOrientation = videoOrientation
+            let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+            print(#file, #function, "queue:", queueName)
             DispatchQueue.main.async {
                 #if os(iOS)
                 self.delegate?.didStartRunning(format: format, session: session, avData: avData)
@@ -305,6 +315,8 @@ class AVEngine: NSObject, AVEngineProtocol {
             return
         }
         delegate?.startedChangingVideoFormat()
+        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             self?.changeCameraFormatSync(format, fps: fps)
         }
@@ -355,6 +367,8 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func orientationChanged(rawValue: Int) {
+        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             do {
                 try self?.videoDevice?.lockForConfiguration()
@@ -368,6 +382,8 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func toggleCamera() {
+        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        print(#file, #function, "queue:", queueName)
         sessionQueue.async {
             [weak self] in
             self?.toggleCameraSync()
@@ -420,46 +436,47 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func destroy() {
+        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             self?.avSession?.stopRunning()
             self?.avSession = nil
         }
     }
     
-    public func initCameras() {
-        if #available(iOS 10.0, *) {
-
-            #if os(iOS)
-            let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
-            session.devices.forEach {
-                if $0.position == .front {
-                    frontCamera = $0
-                }
-                if $0.position == .back {
-                    rearCamera = $0
-                }
-            }
-            #endif
-        } else {
-            let devices = AVCaptureDevice.devices(for: .video)
-            devices.forEach {
-                if $0.position == .front {
-                    frontCamera = $0
-                }
-                if $0.position == .back {
-                    rearCamera = $0
-                }
-            }
-        }
-    }
     
     private func addVideoDeviceObserver() {
         videoDevice?.addObserver(self, forKeyPath: "focusMode", options: .new, context: nil)
         videoDevice?.addObserver(self, forKeyPath: "lensPosition", options: .new, context: nil)
     }
     
-    @available(iOS, deprecated: 12.0)
     fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
+        if #available(iOS 10.2, *) {
+            let deviceTypes: [AVCaptureDevice.DeviceType] = [
+                .builtInWideAngleCamera,
+                .builtInTelephotoCamera,
+                .builtInDuoCamera,
+                .builtInDualCamera
+            ]
+            /*
+            if #available(iOS 13.0, *) {
+                deviceTypes += [.builtInTripleCamera,
+                                .builtInUltraWideCamera]
+            }
+             */
+            let session = AVCaptureDevice.DiscoverySession(
+                           deviceTypes: deviceTypes,
+                           mediaType: .video,
+                           position: .unspecified)
+            
+            for device in session.devices {
+                print("device:", device)
+                if cameraPosition == device.position {
+                    return device
+                }
+            }
+            return nil
+        } else {
         let devices = AVCaptureDevice.devices(for: .video)
         #warning("quick osx fix")
         #if os(macOS)
@@ -471,6 +488,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             }
         }
         return nil
+        }
     }
     
     fileprivate func requestCameraAccess() {
@@ -497,13 +515,10 @@ class AVEngine: NSObject, AVEngineProtocol {
 extension AVEngine: AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureAudioDataOutputSampleBufferDelegate {
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        lockQueue.async { [weak self] in
-            self?.captureOutputSync(output, didOutput: sampleBuffer, from: connection)
-        }
+        captureOutputSync(output, didOutput: sampleBuffer, from: connection)
     }
     
-    func captureOutput(_ output: AVCaptureOutput, didDrop sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-    }
+    func captureOutput(_ output: AVCaptureOutput, didDrop sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) { }
     
     private func captureOutputSync(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if pauseCapturing { return }

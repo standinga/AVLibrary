@@ -19,6 +19,8 @@ public protocol AVEngineProtocol : class {
     var isFocusLocked: Bool { get }
     var avData: AVEngineData? { get }
     var currentCameraPosition: AVCaptureDevice.Position { get set }
+    var audioQueue: DispatchQueue { get }
+    var videoQueue: DispatchQueue { get }
     
     func toggleCamera()
     func orientationChanged(rawValue: Int)
