@@ -450,7 +450,10 @@ class AVEngine: NSObject, AVEngineProtocol {
         videoDevice?.addObserver(self, forKeyPath: "lensPosition", options: .new, context: nil)
     }
     
+    #if os(iOS)
+    
     fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
+        
         if #available(iOS 10.2, *) {
             let deviceTypes: [AVCaptureDevice.DeviceType] = [
                 .builtInWideAngleCamera,
@@ -478,10 +481,6 @@ class AVEngine: NSObject, AVEngineProtocol {
             return nil
         } else {
         let devices = AVCaptureDevice.devices(for: .video)
-        #warning("quick osx fix")
-        #if os(macOS)
-        return devices[0]
-        #endif
         for device in devices {
             if device.position == cameraPosition {
                 return device
@@ -490,6 +489,12 @@ class AVEngine: NSObject, AVEngineProtocol {
         return nil
         }
     }
+    #elseif os(macOS)
+    fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
+        let devices = AVCaptureDevice.devices(for: .video)
+        return devices[0]
+    }
+    #endif
     
     fileprivate func requestCameraAccess() {
         AVCaptureDevice.requestAccess(for: .video) {
