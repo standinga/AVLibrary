@@ -239,7 +239,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         
         let audioDevice = AVCaptureDevice.default(for: .audio)
         
-        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        let queueName = String(cString: __dispatch_queue_get_label(nil))
         print(#file, #function, "queue:", queueName)
         
         sessionQueue.async { [weak self] in
@@ -298,7 +298,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             }
             #endif
             self.videoOrientation = videoOrientation
-            let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+            let queueName = String(cString: __dispatch_queue_get_label(nil))
             print(#file, #function, "queue:", queueName)
             DispatchQueue.main.async {
                 #if os(iOS)
@@ -315,7 +315,7 @@ class AVEngine: NSObject, AVEngineProtocol {
             return
         }
         delegate?.startedChangingVideoFormat()
-        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        let queueName = String(cString: __dispatch_queue_get_label(nil))
         print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             self?.changeCameraFormatSync(format, fps: fps)
@@ -367,7 +367,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func orientationChanged(rawValue: Int) {
-        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        let queueName = String(cString: __dispatch_queue_get_label(nil))
         print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             do {
@@ -382,7 +382,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func toggleCamera() {
-        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        let queueName = String(cString: __dispatch_queue_get_label(nil))
         print(#file, #function, "queue:", queueName)
         sessionQueue.async {
             [weak self] in
@@ -436,7 +436,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func destroy() {
-        let queueName = String(cString: __dispatch_queue_get_label(nil), encoding: .utf8) ?? "no queue name"
+        let queueName = String(cString: __dispatch_queue_get_label(nil))
         print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             self?.avSession?.stopRunning()
