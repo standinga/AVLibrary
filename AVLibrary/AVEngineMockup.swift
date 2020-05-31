@@ -22,7 +22,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var pauseCapturing = false
     var supportsLockedFocus = true
     var isRunning = true
-    var currentCameraPosition = AVCaptureDevice.Position.back
+    var cameraIndex: Int = 0
     var format: MockupAVFormat
     var avData: AVEngineData? = nil
     
@@ -117,10 +117,10 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
         
     }
     
-    func setupAVCapture(_ index: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
+    func setupAVCapture(_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
         let session = AVCaptureSession()
         #if os(iOS)
-        delegate?.didStartRunning(format: format, session: session, avData: AVEngineData(format: format, session: session, cameraPosition: .front, fps: 30, focus: .autoFocus, lensPosition: 1.4, videoOrientation: .portrait))
+        delegate?.didStartRunning(format: format, session: session, avData: AVEngineData(format: format, session: session, cameraIndex: cameraIndex, fps: 30, focus: .autoFocus, lensPosition: 1.4, videoOrientation: .portrait)!)
         #endif
     }
 }

@@ -9,6 +9,7 @@
 import AVFoundation
 
 public protocol AVEngineProtocol : class {
+    var cameraIndex: Int { get set }
     var avSession: AVCaptureSession! { get set }
     var availableCameraFormats: [CameraFormat] { get }
     var fps: Int { get }
@@ -18,7 +19,6 @@ public protocol AVEngineProtocol : class {
     var isRunning: Bool { get set }
     var isFocusLocked: Bool { get }
     var avData: AVEngineData? { get }
-    var currentCameraPosition: AVCaptureDevice.Position { get set }
     var audioQueue: DispatchQueue { get }
     var videoQueue: DispatchQueue { get }
     
@@ -26,7 +26,7 @@ public protocol AVEngineProtocol : class {
     func orientationChanged(rawValue: Int)
     func toggleFocus()
     func changeCameraFormat(_ format: AVCaptureDevice.Format?, fps: Int)
-    func setupAVCapture (_ cameraPosition: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation)
+    func setupAVCapture (_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation)
     func updateLensPositionAndLockFocus(_ lensPosition: Float)
     func debug()
     func destroy()
@@ -40,7 +40,7 @@ public protocol AVEngineDelegate: class {
     #elseif os(macOS)
     func didStartRunning(format: AVCaptureDevice.Format, session: AVCaptureSession)
     #endif
-    func didSwitchCamera(to cameraPosition: AVCaptureDevice.Position)
+    func didSwitchCamera(to cameraIndex: Int, avData: AVEngineData?)
     func didChangeVideoFormat(to format: AVCaptureDevice.Format)
     func startedChangingVideoFormat()
     func didSetFocus(_ focus: AVCaptureDevice.FocusMode, lensPosition: Float)

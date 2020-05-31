@@ -47,7 +47,7 @@ internal  extension AVEngineMockup {
         return sampleBuffer
     }
     
-    internal func retimeSampleBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
+    func retimeSampleBuffer(_ sampleBuffer: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
         var count: CMItemCount = 0
         var osStatus = CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count)
         guard osStatus == 0 else {

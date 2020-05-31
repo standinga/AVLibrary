@@ -11,11 +11,23 @@ import AVFoundation
 import CoreMedia
 
 class AVEngine: NSObject, AVEngineProtocol {
-    
+
     weak var delegate: AVEngineDelegate?
+
+    private var deviceTypes: [AVCaptureDevice.DeviceType] = [
+        .builtInWideAngleCamera,
+        .builtInTelephotoCamera,
+        .builtInDualCamera
+    ]
+
+    private let discoverySession: AVCaptureDevice.DiscoverySession
     
     var avSession: AVCaptureSession!
-    var currentCameraPosition = AVCaptureDevice.Position.back
+
+    var cameraPosition: AVCaptureDevice.Position = .unspecified
+
+    var cameraIndex = 0 // there might be more than one front or back camera
+
     var videoDevice: AVCaptureDevice?
     
     var isRunning = false
@@ -45,9 +57,9 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     var avData: AVEngineData? {
         #if os(iOS)
-        return AVEngineData(format: videoFormat, session: avSession, cameraPosition: currentCameraPosition, fps: fps, focus: videoDevice?.focusMode , lensPosition: videoDevice?.lensPosition, videoOrientation: videoOrientation)
+        return AVEngineData(format: videoFormat, session: avSession, cameraIndex: cameraIndex, fps: fps, focus: videoDevice?.focusMode , lensPosition: videoDevice?.lensPosition, videoOrientation: videoOrientation, cameraPosition: cameraPosition)
         #elseif os(macOS)
-        return AVEngineData(format: videoFormat, session: avSession, cameraPosition: currentCameraPosition, fps: fps, focus: videoDevice?.focusMode , lensPosition: nil, videoOrientation: videoOrientation)
+        return AVEngineData(format: videoFormat, session: avSession, cameraIndex: cameraIndex, fps: fps, focus: videoDevice?.focusMode , lensPosition: nil, videoOrientation: videoOrientation)
         #endif
     }
     
@@ -78,6 +90,15 @@ class AVEngine: NSObject, AVEngineProtocol {
     init (videoQueue: DispatchQueue, audioQueue: DispatchQueue) {
         self.videoQueue = videoQueue
         self.audioQueue = audioQueue
+
+        if #available(iOS 13.0, *) {
+            deviceTypes += [.builtInTripleCamera,
+                            .builtInUltraWideCamera]
+        }
+        discoverySession = AVCaptureDevice.DiscoverySession(
+            deviceTypes: deviceTypes,
+            mediaType: .video,
+            position: .unspecified)
         super.init()
     }
     
@@ -226,21 +247,18 @@ class AVEngine: NSObject, AVEngineProtocol {
         }
     }
     
-    public func setupAVCapture (_ cameraPosition: AVCaptureDevice.Position, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
-        currentCameraPosition = cameraPosition
+    public func setupAVCapture (_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
+        self.cameraIndex = cameraIndex
         requestCameraAccess()
         
         avSession = AVCaptureSession()
         avSession.sessionPreset = sesionPreset
-        videoDevice = getChosenCamera(currentCameraPosition)
+        videoDevice = getChosenCamera(cameraIndex)
         addVideoDeviceObserver()
         let cameraFormats = AVUtils1.availableCameraForamats(videoDevice, currentFormat: nil )
         let format = AVUtils1.getFormatFromFormatString(cameraFormats, formatString: savedFormatString)
         
         let audioDevice = AVCaptureDevice.default(for: .audio)
-        
-        let queueName = String(cString: __dispatch_queue_get_label(nil))
-        print(#file, #function, "queue:", queueName)
         
         sessionQueue.async { [weak self] in
             guard let self = self else { return }
@@ -293,13 +311,11 @@ class AVEngine: NSObject, AVEngineProtocol {
                 return
             }
             #if os(iOS)
-            guard let avData = AVEngineData(format: format, session: self.avSession, cameraPosition: self.currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation) else {
+            guard let avData = AVEngineData(format: format, session: self.avSession, cameraIndex: self.cameraIndex, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation) else {
                 fatalError("avData nil in setup")
             }
             #endif
             self.videoOrientation = videoOrientation
-            let queueName = String(cString: __dispatch_queue_get_label(nil))
-            print(#file, #function, "queue:", queueName)
             DispatchQueue.main.async {
                 #if os(iOS)
                 self.delegate?.didStartRunning(format: format, session: session, avData: avData)
@@ -315,8 +331,6 @@ class AVEngine: NSObject, AVEngineProtocol {
             return
         }
         delegate?.startedChangingVideoFormat()
-        let queueName = String(cString: __dispatch_queue_get_label(nil))
-        print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             self?.changeCameraFormatSync(format, fps: fps)
         }
@@ -367,8 +381,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func orientationChanged(rawValue: Int) {
-        let queueName = String(cString: __dispatch_queue_get_label(nil))
-        print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             do {
                 try self?.videoDevice?.lockForConfiguration()
@@ -382,8 +394,6 @@ class AVEngine: NSObject, AVEngineProtocol {
     }
     
     public func toggleCamera() {
-        let queueName = String(cString: __dispatch_queue_get_label(nil))
-        print(#file, #function, "queue:", queueName)
         sessionQueue.async {
             [weak self] in
             self?.toggleCameraSync()
@@ -393,10 +403,13 @@ class AVEngine: NSObject, AVEngineProtocol {
     private func toggleCameraSync() {
         guard let inputs = avSession.inputs as? [AVCaptureDeviceInput] else {return}
         pauseCapturing = true
-        currentCameraPosition = currentCameraPosition == .front ? .back : .front
+        let count = discoverySession.devices.count
+        guard count > 0 else { return }
+        cameraIndex += 1
+        cameraIndex = cameraIndex % count
         avSession.beginConfiguration()
         
-        let newDevice = getChosenCamera(currentCameraPosition)
+        let newDevice = getChosenCamera(cameraIndex)
         
         var deviceInput: AVCaptureDeviceInput!
         do {
@@ -430,14 +443,12 @@ class AVEngine: NSObject, AVEngineProtocol {
         avSession.commitConfiguration()
         self.videoOrientation = videoConnection?.videoOrientation
         //        let avData = AVEngineData(format: format, session: avSession, cameraPosition: currentCameraPosition, fps: self.currentFPS, focus: self.videoDevice!.focusMode, lensPosition: self.videoDevice!.lensPosition, videoOrientation: videoOrientation)
-        delegate?.didSwitchCamera(to: currentCameraPosition)
+        delegate?.didSwitchCamera(to: cameraIndex, avData: avData)
         addVideoDeviceObserver()
         pauseCapturing = false
     }
     
     public func destroy() {
-        let queueName = String(cString: __dispatch_queue_get_label(nil))
-        print(#file, #function, "queue:", queueName)
         sessionQueue.async { [weak self] in
             self?.avSession?.stopRunning()
             self?.avSession = nil
@@ -452,42 +463,14 @@ class AVEngine: NSObject, AVEngineProtocol {
     
     #if os(iOS)
     
-    fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
-        
-        if #available(iOS 10.2, *) {
-            let deviceTypes: [AVCaptureDevice.DeviceType] = [
-                .builtInWideAngleCamera,
-                .builtInTelephotoCamera,
-                .builtInDuoCamera,
-                .builtInDualCamera
-            ]
-            /*
-            if #available(iOS 13.0, *) {
-                deviceTypes += [.builtInTripleCamera,
-                                .builtInUltraWideCamera]
-            }
-             */
-            let session = AVCaptureDevice.DiscoverySession(
-                           deviceTypes: deviceTypes,
-                           mediaType: .video,
-                           position: .unspecified)
-            
-            for device in session.devices {
-                print("device:", device)
-                if cameraPosition == device.position {
-                    return device
-                }
-            }
-            return nil
-        } else {
-        let devices = AVCaptureDevice.devices(for: .video)
-        for device in devices {
-            if device.position == cameraPosition {
-                return device
-            }
+    fileprivate func getChosenCamera(_ cameraIndex: Int) -> AVCaptureDevice? {
+
+        if discoverySession.devices.count > 0 && cameraIndex < discoverySession.devices.count {
+            let device = discoverySession.devices[cameraIndex]
+            cameraPosition = device.position
+            return device
         }
         return nil
-        }
     }
     #elseif os(macOS)
     fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
