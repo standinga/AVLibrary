@@ -6,7 +6,6 @@
 //  Copyright © 2018 borama. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "AVUtils.h"
 
 @implementation AVUtils
@@ -53,6 +52,51 @@
             [device unlockForConfiguration];
         }
     }
+}
+
++(CMSampleBufferRef) copyH264SampleBufer:(CMSampleBufferRef) sampleBuffer blockBufferRef:(CMBlockBufferRef *) copiedBuffer {
+
+    CMBlockBufferRef blockBufferRef = CMSampleBufferGetDataBuffer(sampleBuffer);
+    CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
+    CMFormatDescriptionRef formatDescriptionRef = CMSampleBufferGetFormatDescription(sampleBuffer);
+    NSMutableArray* array = [[NSMutableArray alloc] init];
+
+    CMSampleTimingInfo timing   = {.duration= kCMTimeInvalid, .presentationTimeStamp= CMSampleBufferGetPresentationTimeStamp(sampleBuffer), .decodeTimeStamp= CMSampleBufferGetDecodeTimeStamp(sampleBuffer)};
+    CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &timing);
+    CMSampleBufferRef copySampleBuffer = NULL;
+
+    CMItemCount count;
+    CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, 0, nil, &count);
+    CMSampleTimingInfo * sampleTimingArray = malloc(sizeof(CMSampleTimingInfo) * count);
+    CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, count, sampleTimingArray, &count);
+
+    CMSampleBufferCreate(kCFAllocatorDefault, nil, YES, nil, nil, formatDescriptionRef, 1, 1, sampleTimingArray, 0, nil, &copySampleBuffer);
+
+    CFArrayRef newAttachments = CMSampleBufferGetSampleAttachmentsArray(copySampleBuffer, true);
+
+    CFIndex numValues = CFArrayGetCount(attachmentsArray);
+
+    CFIndex idx;
+    for (idx = 0; idx < numValues; idx++) {
+        CFDictionaryRef dict = CFArrayGetValueAtIndex(attachmentsArray, idx);
+        CFIndex count = CFDictionaryGetCount(dict);
+        const void * keys [count];
+        const void * values [count];
+        CFMutableDictionaryRef newDict = (CFMutableDictionaryRef) CFArrayGetValueAtIndex(newAttachments, idx);
+        CFDictionaryGetKeysAndValues(dict, keys, values);
+        for (int i=0; i<count; i++) {
+            CFDictionarySetValue(newDict, keys[i], values[i]);
+        }
+    }
+
+    size_t length = CMBlockBufferGetDataLength(blockBufferRef);
+    char * outMememory = NULL;
+    CMBlockBufferGetDataPointer(blockBufferRef, 0, &length, &length, &outMememory);
+    CMBlockBufferCreateEmpty(kCFAllocatorDefault, 0, kCMBlockBufferAssureMemoryNowFlag ,copiedBuffer);
+    CMBlockBufferAppendMemoryBlock(*copiedBuffer, outMememory, length, kCFAllocatorDefault, NULL, NULL, length, NULL);
+    CMSampleBufferSetDataBuffer(copySampleBuffer, blockBufferRef);
+    free(sampleTimingArray);
+    return copySampleBuffer;
 }
 
 +(CMSampleBufferRef) copyAudioSampleBufferRef:(CMSampleBufferRef) sampleBuffer blockBufferRef:(CMBlockBufferRef *) blockBufferRef

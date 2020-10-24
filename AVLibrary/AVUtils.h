@@ -13,5 +13,6 @@
 
 +(CMSampleBufferRef) copyAudioSampleBufferRef:(CMSampleBufferRef) sampleBuffer blockBufferRef:(CMBlockBufferRef *) blockBufferRef;
 +(CMSampleBufferRef)updateTimestamp:(CMSampleBufferRef)sampleBuffer updatedBuffer:(CMSampleBufferRef *)updateBuffer timestamp:(CMTime)timestamp;
++(CMSampleBufferRef) copyH264SampleBufer:(CMSampleBufferRef) sampleBuffer blockBufferRef:(CMBlockBufferRef *) copiedBufferRef;
 +(void)copyVideoFrame:(CVImageBufferRef)pixelBuffer bufferCopy:(CVImageBufferRef *)bufferCopy;
 @end
