@@ -54,12 +54,11 @@
     }
 }
 
-+(CMSampleBufferRef) copyH264SampleBufer:(CMSampleBufferRef) sampleBuffer blockBufferRef:(CMBlockBufferRef *) copiedBuffer {
++(CMSampleBufferRef) copyH264SampleBufer:(CMSampleBufferRef) sampleBuffer {
 
     CMBlockBufferRef blockBufferRef = CMSampleBufferGetDataBuffer(sampleBuffer);
     CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
     CMFormatDescriptionRef formatDescriptionRef = CMSampleBufferGetFormatDescription(sampleBuffer);
-    NSMutableArray* array = [[NSMutableArray alloc] init];
 
     CMSampleTimingInfo timing   = {.duration= kCMTimeInvalid, .presentationTimeStamp= CMSampleBufferGetPresentationTimeStamp(sampleBuffer), .decodeTimeStamp= CMSampleBufferGetDecodeTimeStamp(sampleBuffer)};
     CMSampleBufferGetSampleTimingInfo(sampleBuffer, 0, &timing);
@@ -90,11 +89,31 @@
     }
 
     size_t length = CMBlockBufferGetDataLength(blockBufferRef);
-    char * outMememory = NULL;
-    CMBlockBufferGetDataPointer(blockBufferRef, 0, &length, &length, &outMememory);
-    CMBlockBufferCreateEmpty(kCFAllocatorDefault, 0, kCMBlockBufferAssureMemoryNowFlag ,copiedBuffer);
-    CMBlockBufferAppendMemoryBlock(*copiedBuffer, outMememory, length, kCFAllocatorDefault, NULL, NULL, length, NULL);
-    CMSampleBufferSetDataBuffer(copySampleBuffer, blockBufferRef);
+    size_t totalLenght = 0;
+    size_t bufferLenght = 0;
+    char* dataPointer = nil;
+
+    CMBlockBufferGetDataPointer(blockBufferRef, 0, &bufferLenght, &totalLenght, &dataPointer);
+
+    size_t bufferOffset = 0;
+    size_t avcHeaderLength = 4;
+    NSMutableData * buffer = [[NSMutableData alloc] init];
+    char dataBytes[totalLenght];
+    while (bufferOffset < totalLenght - avcHeaderLength) {
+        UInt32 naluUnitLength = 0;
+        memcpy(&naluUnitLength, dataPointer + bufferOffset, avcHeaderLength);
+        naluUnitLength = CFSwapInt32BigToHost(naluUnitLength);
+        char naluStart[4] = {0x0, 0x0, 0x0, 0x1};
+        [buffer appendBytes: naluStart length:4];
+        [buffer appendBytes:dataPointer + bufferOffset + avcHeaderLength length:naluUnitLength];
+        bufferOffset += avcHeaderLength - naluUnitLength;
+    }
+    CMBlockBufferCopyDataBytes(blockBufferRef, 0, totalLenght, &dataBytes);
+    CMBlockBufferRef copiedBuffer = NULL;
+
+    CMBlockBufferCreateWithMemoryBlock(NULL, dataBytes, totalLenght, kCFAllocatorNull, NULL, 0, totalLenght, 0, &copiedBuffer);
+//    CFRetain(copiedBuffer);
+    CMSampleBufferSetDataBuffer(copySampleBuffer, copiedBuffer);
     free(sampleTimingArray);
     return copySampleBuffer;
 }

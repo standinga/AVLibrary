@@ -15,9 +15,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     weak var delegate: AVEngineDelegate?
 
     private var deviceTypes: [AVCaptureDevice.DeviceType] = [
-        .builtInWideAngleCamera,
-        .builtInTelephotoCamera,
-        .builtInDualCamera
+        .builtInWideAngleCamera
     ]
 
     private let discoverySession: AVCaptureDevice.DiscoverySession
@@ -91,10 +89,12 @@ class AVEngine: NSObject, AVEngineProtocol {
         self.videoQueue = videoQueue
         self.audioQueue = audioQueue
 
+        #if os(iOS)
         if #available(iOS 13.0, *) {
             deviceTypes += [.builtInTripleCamera,
                             .builtInUltraWideCamera]
         }
+        #endif
         discoverySession = AVCaptureDevice.DiscoverySession(
             deviceTypes: deviceTypes,
             mediaType: .video,
@@ -253,7 +253,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         
         avSession = AVCaptureSession()
         avSession.sessionPreset = sesionPreset
-        videoDevice = getChosenCamera(cameraIndex)
+        videoDevice = getChosenCamera(AVCaptureDevice.Position(rawValue: cameraIndex)?.rawValue ?? 0)
         addVideoDeviceObserver()
         let cameraFormats = AVUtils1.availableCameraForamats(videoDevice, currentFormat: nil )
         let format = AVUtils1.getFormatFromFormatString(cameraFormats, formatString: savedFormatString)
@@ -409,7 +409,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         cameraIndex = cameraIndex % count
         avSession.beginConfiguration()
         
-        let newDevice = getChosenCamera(cameraIndex)
+        let newDevice = getChosenCamera(AVCaptureDevice.Position(rawValue: cameraIndex)?.rawValue ?? 0)
         
         var deviceInput: AVCaptureDeviceInput!
         do {
