@@ -21,6 +21,7 @@ public protocol AVEngineProtocol : class {
     var avData: AVEngineData? { get }
     var audioQueue: DispatchQueue { get }
     var videoQueue: DispatchQueue { get }
+    var videoDevice: AVCaptureDevice? { get }
     
     func toggleCamera()
     func orientationChanged(rawValue: Int)

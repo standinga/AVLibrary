@@ -25,6 +25,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var cameraIndex: Int = 0
     var format: MockupAVFormat
     var avData: AVEngineData? = nil
+    var videoDevice: AVCaptureDevice?
     
     private var timer: Timer?
     private var sampleBuffer: CMSampleBuffer!
