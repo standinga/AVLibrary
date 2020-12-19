@@ -17,15 +17,10 @@ import AppKit
 open class AVUtils1 {
     
     public static func updateTimestamp(_ sample: CMSampleBuffer, timestamp: CMTime) -> CMSampleBuffer {
-        var count: CMItemCount = 0
-        var osStatus = CMSampleBufferGetSampleTimingInfoArray(sample, entryCount: 0, arrayToFill: nil, entriesNeededOut: &count)
-        if osStatus != 0 {
-            print ("failed CMSampleBufferGetSampleTimingInfoArray ", osStatus)
-        }
+        let count: CMItemCount = 1
         var info = [CMSampleTimingInfo](repeating: CMSampleTimingInfo(duration: .zero, presentationTimeStamp: .zero, decodeTimeStamp: .zero), count: count)
         
-        osStatus = CMSampleBufferGetSampleTimingInfoArray(sample, entryCount: count, arrayToFill: &info, entriesNeededOut: &count)
-        
+
         for i in 0..<count {
             info[i].decodeTimeStamp = timestamp
             info[i].presentationTimeStamp = timestamp
