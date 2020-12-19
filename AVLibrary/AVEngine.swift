@@ -260,8 +260,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         
         let audioDevice = AVCaptureDevice.default(for: .audio)
         
-        sessionQueue.async { [weak self] in
-            guard let self = self else { return }
+        sessionQueue.async {
             self.avSession.beginConfiguration()
             
             self.initVideoInput(videoDevice: self.videoDevice!, session: self.avSession)
@@ -280,6 +279,11 @@ class AVEngine: NSObject, AVEngineProtocol {
                         device.lockForConfiguration()
                     if let format = format {
                         self.setCustomFormatOrDefault(format, device: self.videoDevice)
+                    }
+                    if device.position == .front {
+                        self.videoConnection?.isVideoMirrored = true
+                    } else {
+                        self.videoConnection?.isVideoMirrored = false
                     }
                     var fps = Int32(fps)
                     let maxFrameRate = device.activeFormat.videoSupportedFrameRateRanges[0].maxFrameRate
@@ -434,6 +438,11 @@ class AVEngine: NSObject, AVEngineProtocol {
                 videoDevice?.lockForConfiguration()
             setCustomFormatOrDefault(nil, device: videoDevice)
             videoConnection = videoOut!.connection(with: .video)
+            if newDevice.position == .front {
+                videoConnection?.isVideoMirrored = true
+            } else {
+                videoConnection?.isVideoMirrored = false
+            }
             videoDevice = newDevice
             videoDevice?.unlockForConfiguration()
         } catch {
