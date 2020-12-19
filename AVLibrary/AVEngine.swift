@@ -253,7 +253,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         
         avSession = AVCaptureSession()
         avSession.sessionPreset = sesionPreset
-        videoDevice = getChosenCamera(AVCaptureDevice.Position(rawValue: cameraIndex)?.rawValue ?? 0)
+        videoDevice = getChosenCamera(cameraIndex)
         addVideoDeviceObserver()
         let cameraFormats = AVUtils1.availableCameraForamats(videoDevice, currentFormat: nil )
         let format = AVUtils1.getFormatFromFormatString(cameraFormats, formatString: savedFormatString)
@@ -405,15 +405,14 @@ class AVEngine: NSObject, AVEngineProtocol {
         pauseCapturing = true
         let count = discoverySession.devices.count
         guard count > 0 else { return }
-        cameraIndex += 1
-        cameraIndex = cameraIndex % count
+        cameraIndex = (cameraIndex + 1) % count
         avSession.beginConfiguration()
         
-        let newDevice = getChosenCamera(AVCaptureDevice.Position(rawValue: cameraIndex)?.rawValue ?? 0)
+        guard let newDevice = getChosenCamera(cameraIndex) else { return }
         
         var deviceInput: AVCaptureDeviceInput!
         do {
-            deviceInput = try AVCaptureDeviceInput(device: newDevice!)
+            deviceInput = try AVCaptureDeviceInput(device: newDevice)
         } catch let error {
             NSLog(error.localizedDescription)
             return
@@ -464,13 +463,11 @@ class AVEngine: NSObject, AVEngineProtocol {
     #if os(iOS)
     
     fileprivate func getChosenCamera(_ cameraIndex: Int) -> AVCaptureDevice? {
-
-        if discoverySession.devices.count > 0 && cameraIndex < discoverySession.devices.count {
-            let device = discoverySession.devices[cameraIndex]
-            cameraPosition = device.position
-            return device
-        }
-        return nil
+        guard !discoverySession.devices.isEmpty else { return nil }
+        let cameraIndex = min(discoverySession.devices.count - 1, cameraIndex)
+        let device = discoverySession.devices[cameraIndex]
+        cameraPosition = device.position
+        return device
     }
     #elseif os(macOS)
     fileprivate func getChosenCamera(_ cameraPosition: AVCaptureDevice.Position)->AVCaptureDevice? {
