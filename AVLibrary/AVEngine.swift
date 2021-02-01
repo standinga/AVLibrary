@@ -163,9 +163,9 @@ class AVEngine: NSObject, AVEngineProtocol {
             self.videoOrientation = videoOrientation
         }
     }
-    
-    fileprivate func initAudioInput(audioDevice: AVCaptureDevice?, session: AVCaptureSession) {
-        guard let audioDevice = audioDevice else { return }
+    fileprivate func initAudioInput(session: AVCaptureSession) {
+        guard let audioDevice = AVCaptureDevice.default(for: .audio)
+         else { return }
         do {
             try
                 audioIn = AVCaptureDeviceInput.init(device: audioDevice)
@@ -257,16 +257,14 @@ class AVEngine: NSObject, AVEngineProtocol {
         addVideoDeviceObserver()
         let cameraFormats = AVUtils1.availableCameraForamats(videoDevice, currentFormat: nil )
         let format = AVUtils1.getFormatFromFormatString(cameraFormats, formatString: savedFormatString)
-        
-        let audioDevice = AVCaptureDevice.default(for: .audio)
-        
+
         sessionQueue.async {
             self.avSession.beginConfiguration()
             
             self.initVideoInput(videoDevice: self.videoDevice!, session: self.avSession)
             self.initVideoOutput(session: self.avSession, videoOrientation: videoOrientation)
             
-            self.initAudioInput(audioDevice: audioDevice, session: self.avSession)
+            self.initAudioInput(session: self.avSession)
             self.initAudioOutput(session: self.avSession)
             
             self.avSession.commitConfiguration()
@@ -500,6 +498,43 @@ class AVEngine: NSObject, AVEngineProtocol {
         let time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         guard time != .invalid else {return 0}
         return (Double)(time.value) / (Double)(time.timescale);
+    }
+
+    var currentPort = 0
+
+
+
+    func toggleMicrophone() {
+        let dataSources = getAudioDataSources(session: avSession)
+        currentPort += 1
+        currentPort = currentPort % dataSources.count
+        let newSource = dataSources[currentPort]
+        let myAudioSession = AVAudioSession.sharedInstance()
+        guard let input = myAudioSession.availableInputs?.first else { return }
+        do {
+            print("setting new source", newSource)
+            try input.setPreferredDataSource(newSource) }
+        catch {
+            print(error)
+        }
+    }
+
+    func getAudioDataSources(session: AVCaptureSession) -> [AVAudioSessionDataSourceDescription] {
+        let myAudioSession = AVAudioSession.sharedInstance()
+        try! myAudioSession.setCategory(.playAndRecord)
+        try! myAudioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        let inputs = myAudioSession.availableInputs ?? []
+
+        session.automaticallyConfiguresApplicationAudioSession = false
+        let audioDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInMicrophone], mediaType: .audio, position: .unspecified)
+
+        let devices = audioDiscoverySession.devices
+
+        guard let dataSources = inputs.first?.dataSources else { fatalError() }
+        return dataSources
+
+        print("dataSources", dataSources)
+
     }
     
 }

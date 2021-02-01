@@ -33,6 +33,7 @@ public protocol AVEngineProtocol : class {
     func destroy()
     func lockFocus()
     func unlockFocus()
+    func toggleMicrophone()
 }
 
 public protocol AVEngineDelegate: class {
@@ -50,6 +51,7 @@ public protocol AVEngineDelegate: class {
 
 public extension AVEngineProtocol {
     func destroy() { }
+    func toggleMicrophone() {}
 }
 
 public extension AVEngineDelegate {

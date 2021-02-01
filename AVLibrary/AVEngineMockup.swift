@@ -12,7 +12,7 @@ import UIKit
 import AppKit
 #endif
 import AVFoundation
-class AVEngineMockup: NSObject, AVEngineProtocol {
+class AVEngineMockup: NSObject, AVEngineProtocol, AVCaptureAudioDataOutputSampleBufferDelegate {
     
     var avSession: AVCaptureSession! = nil
     var availableCameraFormats: [CameraFormat] = AVEngineMockupUtils.formats
@@ -33,6 +33,12 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     var isFocusLocked = false
     var previousTimestamp = CFAbsoluteTimeGetCurrent()
     var startTime = CFAbsoluteTimeGetCurrent() - 0.02
+
+    private var audioConnection: AVCaptureConnection?
+
+    private var audioIn: AVCaptureDeviceInput?
+    private var audioOut: AVCaptureAudioDataOutput?
+    private var audioCompressionSettings: [AnyHashable : Any]?
     
     let videoQueue: DispatchQueue
     
@@ -119,9 +125,78 @@ class AVEngineMockup: NSObject, AVEngineProtocol {
     }
     
     func setupAVCapture(_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
-        let session = AVCaptureSession()
-        #if os(iOS)
-        delegate?.didStartRunning(format: format, session: session, avData: AVEngineData(format: format, session: session, cameraIndex: cameraIndex, fps: 30, focus: .autoFocus, lensPosition: 1.4, videoOrientation: .portrait)!)
-        #endif
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
+        } catch {
+            print("error", error)
+            return
+        }
+
+        do {
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("error", error)
+            return
+        }
+        let audioDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInMicrophone], mediaType: nil, position: .unspecified)
+
+        let devices = audioDiscoverySession.devices
+
+        let audioDevice = AVCaptureDevice.default(for: .audio)
+        avSession = AVCaptureSession()
+        avSession.beginConfiguration()
+
+        initAudioInput(audioDevice: audioDevice, session: self.avSession)
+        initAudioOutput(session: self.avSession)
+        avSession.commitConfiguration()
+        avSession.startRunning()
+//        #if os(iOS)
+        delegate?.didStartRunning(format: format, session: avSession, avData: AVEngineData(format: format, session: avSession, cameraIndex: cameraIndex, fps: 30, focus: .autoFocus, lensPosition: 1.4, videoOrientation: .portrait)!)
+//        #endif
+    }
+
+    fileprivate func initAudioInput(audioDevice: AVCaptureDevice?, session: AVCaptureSession) {
+        guard let audioDevice = audioDevice else { return }
+        do {
+            try
+                audioIn = AVCaptureDeviceInput.init(device: audioDevice)
+            guard let audioIn = audioIn else {return}
+            if session.canAddInput(audioIn) {
+                session.addInput(audioIn)
+            }
+        } catch let error {
+            NSLog(error.localizedDescription)
+            return
+        }
+    }
+
+    fileprivate func initAudioOutput(session: AVCaptureSession) {
+        if (audioOut != nil) {
+            session.removeOutput(audioOut!)
+        }
+        audioOut = AVCaptureAudioDataOutput()
+        guard let audioOut = audioOut else { return }
+
+        audioOut.setSampleBufferDelegate(self, queue: audioQueue)
+        if session.canAddOutput(audioOut) {
+            session.addOutput(audioOut)
+            audioConnection = audioOut.connection(with: .audio)
+            #if os(iOS)
+            audioCompressionSettings = audioOut.recommendedAudioSettingsForAssetWriter(writingTo: AVFileType.mov)
+            #elseif os(macOS)
+            audioCompressionSettings = [:]
+            #endif
+        }
+    }
+
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        if pauseCapturing { return }
+        let timestamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+        guard let port = connection.inputPorts.first else { return }
+        delegate?.onSampleBuffer(sampleBuffer,
+                                 connection: connection,
+                                 timestamp: timestamp,
+                                 output: output,
+                                 isVideo: port.mediaType == .video)
     }
 }
