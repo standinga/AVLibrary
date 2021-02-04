@@ -13,7 +13,9 @@ import AppKit
 #endif
 import AVFoundation
 class AVEngineMockup: NSObject, AVEngineProtocol, AVCaptureAudioDataOutputSampleBufferDelegate {
-    
+
+    var mirrorBackCameraVideo = false
+    var mirrorFrontCameraVideo = false
     var avSession: AVCaptureSession! = nil
     var availableCameraFormats: [CameraFormat] = AVEngineMockupUtils.formats
     var fps = 30
@@ -108,9 +110,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol, AVCaptureAudioDataOutputSample
         #endif
     }
     
-    func toggleCamera() {
-        
-    }
+    func toggleCamera(mirrorFrontCameraVideo: Bool, mirrorBackCameraVideo: Bool) { }
     
     func orientationChanged(rawValue: Int) {
         
@@ -124,7 +124,7 @@ class AVEngineMockup: NSObject, AVEngineProtocol, AVCaptureAudioDataOutputSample
         
     }
     
-    func setupAVCapture(_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
+    func setupAVCapture(_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation, mirrorFrontCameraVideo: Bool, mirrorBackCameraVideo: Bool) {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
         } catch {

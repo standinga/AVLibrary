@@ -9,6 +9,8 @@
 import AVFoundation
 
 public protocol AVEngineProtocol : class {
+    var mirrorBackCameraVideo: Bool { get set }
+    var mirrorFrontCameraVideo: Bool { get set }
     var cameraIndex: Int { get set }
     var avSession: AVCaptureSession! { get set }
     var availableCameraFormats: [CameraFormat] { get }
@@ -23,11 +25,11 @@ public protocol AVEngineProtocol : class {
     var videoQueue: DispatchQueue { get }
     var videoDevice: AVCaptureDevice? { get }
     
-    func toggleCamera()
+    func toggleCamera(mirrorFrontCameraVideo: Bool, mirrorBackCameraVideo: Bool)
     func orientationChanged(rawValue: Int)
     func toggleFocus()
     func changeCameraFormat(_ format: AVCaptureDevice.Format?, fps: Int)
-    func setupAVCapture (_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation)
+    func setupAVCapture (_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation, mirrorFrontCameraVideo: Bool, mirrorBackCameraVideo: Bool)
     func updateLensPositionAndLockFocus(_ lensPosition: Float)
     func debug()
     func destroy()

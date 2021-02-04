@@ -12,6 +12,24 @@ import CoreMedia
 
 class AVEngine: NSObject, AVEngineProtocol {
 
+    var mirrorBackCameraVideo = false {
+        didSet {
+            if let device = videoDevice,
+               device.position == .back {
+                videoConnection?.isVideoMirrored = mirrorBackCameraVideo
+            }
+        }
+    }
+
+    var mirrorFrontCameraVideo = false {
+        didSet {
+            if let device = videoDevice,
+               device.position == .front {
+                videoConnection?.isVideoMirrored = mirrorFrontCameraVideo
+            }
+        }
+    }
+
     weak var delegate: AVEngineDelegate?
 
     private var deviceTypes: [AVCaptureDevice.DeviceType] = [
@@ -19,7 +37,7 @@ class AVEngine: NSObject, AVEngineProtocol {
     ]
 
     private let discoverySession: AVCaptureDevice.DiscoverySession
-    
+
     var avSession: AVCaptureSession!
 
     var cameraPosition: AVCaptureDevice.Position = .unspecified
@@ -247,7 +265,7 @@ class AVEngine: NSObject, AVEngineProtocol {
         }
     }
     
-    public func setupAVCapture (_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation) {
+    public func setupAVCapture (_ cameraIndex: Int, fps: Int, savedFormatString: String?, videoOrientation: AVCaptureVideoOrientation, mirrorFrontCameraVideo: Bool, mirrorBackCameraVideo: Bool) {
         self.cameraIndex = cameraIndex
         requestCameraAccess()
         
@@ -279,9 +297,9 @@ class AVEngine: NSObject, AVEngineProtocol {
                         self.setCustomFormatOrDefault(format, device: self.videoDevice)
                     }
                     if device.position == .front {
-                        self.videoConnection?.isVideoMirrored = true
+                        self.videoConnection?.isVideoMirrored = mirrorFrontCameraVideo
                     } else {
-                        self.videoConnection?.isVideoMirrored = false
+                        self.videoConnection?.isVideoMirrored = mirrorBackCameraVideo
                     }
                     var fps = Int32(fps)
                     let maxFrameRate = device.activeFormat.videoSupportedFrameRateRanges[0].maxFrameRate
@@ -395,14 +413,14 @@ class AVEngine: NSObject, AVEngineProtocol {
         }
     }
     
-    public func toggleCamera() {
+    public func toggleCamera(mirrorFrontCameraVideo: Bool, mirrorBackCameraVideo: Bool) {
         sessionQueue.async {
             [weak self] in
-            self?.toggleCameraSync()
+            self?.toggleCameraSync(mirrorFrontCameraVideo: mirrorFrontCameraVideo, mirrorBackCameraVideo: mirrorBackCameraVideo)
         }
     }
     
-    private func toggleCameraSync() {
+    private func toggleCameraSync(mirrorFrontCameraVideo: Bool, mirrorBackCameraVideo: Bool) {
         guard let inputs = avSession.inputs as? [AVCaptureDeviceInput] else {return}
         pauseCapturing = true
         let count = discoverySession.devices.count
@@ -437,9 +455,9 @@ class AVEngine: NSObject, AVEngineProtocol {
             setCustomFormatOrDefault(nil, device: videoDevice)
             videoConnection = videoOut!.connection(with: .video)
             if newDevice.position == .front {
-                videoConnection?.isVideoMirrored = true
+                videoConnection?.isVideoMirrored = mirrorFrontCameraVideo
             } else {
-                videoConnection?.isVideoMirrored = false
+                videoConnection?.isVideoMirrored = mirrorBackCameraVideo
             }
             videoDevice = newDevice
             videoDevice?.unlockForConfiguration()
